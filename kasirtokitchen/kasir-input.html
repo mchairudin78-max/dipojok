@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Kasir">
 <meta name="theme-color" content="#0a0a0a">
-<link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" href="/icon-kasir.png">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-kasir.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>KASIR — DiPojok</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;500;600;700;900&display=swap" rel="stylesheet">
@@ -1201,7 +1201,7 @@ if(window.location.protocol === 'file:'){
 <script>
 if('serviceWorker' in navigator){
   window.addEventListener('load', function(){
-    navigator.serviceWorker.register('/sw.js').catch(function(){});
+    navigator.serviceWorker.register('sw.js').catch(function(){});
   });
 }
 </script>
