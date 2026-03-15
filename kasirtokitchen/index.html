@@ -65,13 +65,13 @@
   <div class="sub">Kitchen Management System</div>
 
   <div class="cards">
-    <a class="card card-kasir" href="/kasir">
+    <a class="card card-kasir" href="kasir-input.html">
       <div class="card-icon">🧾</div>
       <div class="card-title">KASIR</div>
       <div class="card-desc">Input pesanan & kelola order</div>
       <div class="card-arrow">→</div>
     </a>
-    <a class="card card-kitchen" href="/kitchen">
+    <a class="card card-kitchen" href="kitchen.html">
       <div class="card-icon">🍳</div>
       <div class="card-title">DAPUR</div>
       <div class="card-desc">Monitor & sajikan pesanan</div>
@@ -85,6 +85,14 @@
 if('serviceWorker' in navigator){
   window.addEventListener('load', function(){
     navigator.serviceWorker.register('/sw.js').catch(function(){});
+  });
+}
+</script>
+
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
   });
 }
 </script>

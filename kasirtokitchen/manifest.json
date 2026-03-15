@@ -2,7 +2,7 @@
   "name": "DiPojok Kitchen",
   "short_name": "DiPojok",
   "description": "Sistem kasir dan dapur DiPojok Kitchen",
-  "start_url": "./kasir-input.html",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "fullscreen",
   "orientation": "any",
@@ -27,5 +27,5 @@
       "purpose": "maskable"
     }
   ],
-  "id": "./kasir-input.html"
+  "id": "./index.html"
 }
