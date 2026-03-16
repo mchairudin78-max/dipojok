@@ -2,99 +2,367 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="manifest.json">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="DiPojok">
-<meta name="theme-color" content="#0a0a0a">
-<link rel="apple-touch-icon" href="/icon-kasir.svg">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080808">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>DiPojok Kitchen System</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{
-    background:#0a0a0a;
-    font-family:'Montserrat',sans-serif;
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    padding:24px;
-  }
-  .logo{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:6px;color:#fff;margin-bottom:4px;}
-  .logo span{color:#25d366;}
-  .sub{font-size:11px;letter-spacing:3px;color:rgba(255,255,255,.4);margin-bottom:48px;text-transform:uppercase;}
-  .cards{display:flex;flex-direction:column;gap:16px;width:100%;max-width:360px;}
-  .card{
-    display:block;
-    text-decoration:none;
-    border-radius:12px;
-    padding:24px 28px;
-    cursor:pointer;
-    transition:transform .15s, box-shadow .15s;
-    position:relative;
-    overflow:hidden;
-  }
-  .card:active{transform:scale(.97);}
-  .card-kasir{
-    background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);
-    border:2px solid rgba(59,130,246,.4);
-    box-shadow:0 4px 24px rgba(59,130,246,.15);
-  }
-  .card-kasir:hover{box-shadow:0 8px 32px rgba(59,130,246,.35);transform:translateY(-2px);}
-  .card-kitchen{
-    background:linear-gradient(135deg,#1a2e1a 0%,#0d1f0d 100%);
-    border:2px solid rgba(37,211,102,.4);
-    box-shadow:0 4px 24px rgba(37,211,102,.15);
-  }
-  .card-kitchen:hover{box-shadow:0 8px 32px rgba(37,211,102,.35);transform:translateY(-2px);}
-  .card-icon{font-size:36px;margin-bottom:10px;}
-  .card-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:#fff;margin-bottom:4px;}
-  .card-kasir .card-title{color:#93c5fd;}
-  .card-kitchen .card-title{color:#86efac;}
-  .card-desc{font-size:12px;color:rgba(255,255,255,.5);letter-spacing:.5px;}
-  .card-arrow{position:absolute;right:24px;top:50%;transform:translateY(-50%);font-size:22px;opacity:.4;}
-  .footer{margin-top:40px;font-size:10px;color:rgba(255,255,255,.2);letter-spacing:2px;text-align:center;}
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--red:#E8192C;--gn:#25D366;--bl:#3B82F6;}
+html,body{height:100%;overflow:hidden;background:#080808;font-family:'DM Sans',sans-serif;color:#fff;user-select:none;}
+canvas{position:fixed;inset:0;z-index:0;}
+.orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;}
+.orb1{width:500px;height:500px;background:rgba(232,25,44,.1);top:-150px;left:-150px;animation:o1 9s ease-in-out infinite;}
+.orb2{width:350px;height:350px;background:rgba(37,211,102,.07);bottom:-100px;right:-100px;animation:o2 11s ease-in-out infinite;}
+.orb3{width:250px;height:250px;background:rgba(59,130,246,.06);top:50%;left:50%;transform:translate(-50%,-50%);animation:o3 7s ease-in-out infinite;}
+@keyframes o1{0%,100%{transform:translate(0,0);}50%{transform:translate(50px,40px);}}
+@keyframes o2{0%,100%{transform:translate(0,0);}50%{transform:translate(-40px,-30px);}}
+@keyframes o3{0%,100%{transform:translate(-50%,-50%) scale(1);}50%{transform:translate(-50%,-50%) scale(1.4);}}
+
+.wrap{position:relative;z-index:2;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;gap:0;}
+
+/* LOGO */
+.logo-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:52px;opacity:0;animation:fu .8s .1s cubic-bezier(.16,1,.3,1) forwards;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,14vw,88px);letter-spacing:14px;line-height:1;display:flex;align-items:baseline;}
+.logo span{display:inline-block;opacity:0;}
+.logo .c0{animation:cd .5s .3s cubic-bezier(.16,1,.3,1) forwards;}
+.logo .c1{animation:cd .5s .4s cubic-bezier(.16,1,.3,1) forwards;}
+.logo .c2{color:var(--red);animation:cd .5s .5s cubic-bezier(.16,1,.3,1) forwards;}
+.logo .c3{color:var(--red);animation:cd .5s .58s cubic-bezier(.16,1,.3,1) forwards;}
+.logo .c4{color:var(--red);animation:cd .5s .66s cubic-bezier(.16,1,.3,1) forwards;}
+.logo .c5{color:var(--red);animation:cd .5s .74s cubic-bezier(.16,1,.3,1) forwards;}
+.logo .c6{color:var(--red);animation:cd .5s .82s cubic-bazier(.16,1,.3,1) forwards;animation:.5s .82s cubic-bezier(.16,1,.3,1) cd forwards;}
+@keyframes cd{from{opacity:0;transform:translateY(-24px) scaleY(.5);}to{opacity:1;transform:none;}}
+
+.divider{height:1px;width:0;background:linear-gradient(90deg,transparent,rgba(232,25,44,.6),transparent);margin:10px auto 0;animation:dw .7s 1s ease forwards;}
+@keyframes dw{to{width:100%;}}
+
+.tagline{font-size:9px;letter-spacing:6px;text-transform:uppercase;color:rgba(255,255,255,.2);margin-top:8px;opacity:0;animation:fu .5s 1.1s ease forwards;}
+
+/* CARDS */
+.cards{display:flex;flex-direction:column;gap:12px;width:100%;max-width:320px;}
+.card{display:block;text-decoration:none;border-radius:18px;overflow:hidden;position:relative;opacity:0;transform:translateY(28px);transition:transform .2s cubic-bezier(.16,1,.3,1),box-shadow .2s;}
+.card:nth-child(1){animation:fu .7s 1.2s cubic-bezier(.16,1,.3,1) forwards;}
+.card:nth-child(2){animation:fu .7s 1.35s cubic-bezier(.16,1,.3,1) forwards;}
+.card:active{transform:scale(.96)!important;}
+
+.card-bg{position:absolute;inset:0;z-index:0;}
+.card-k .card-bg{background:linear-gradient(135deg,rgba(59,130,246,.18) 0%,rgba(8,12,24,.97) 65%);}
+.card-g .card-bg{background:linear-gradient(135deg,rgba(37,211,102,.14) 0%,rgba(6,14,8,.97) 65%);}
+
+.card-border{position:absolute;inset:0;border-radius:18px;border:1px solid;z-index:1;pointer-events:none;}
+.card-k .card-border{border-color:rgba(59,130,246,.35);animation:bpk 3.5s 2s ease-in-out infinite;}
+.card-g .card-border{border-color:rgba(37,211,102,.3);animation:bpg 3.5s 2.2s ease-in-out infinite;}
+@keyframes bpk{0%,100%{border-color:rgba(59,130,246,.3);}50%{border-color:rgba(59,130,246,.65);box-shadow:0 0 20px rgba(59,130,246,.12);}}
+@keyframes bpg{0%,100%{border-color:rgba(37,211,102,.25);}50%{border-color:rgba(37,211,102,.55);box-shadow:0 0 20px rgba(37,211,102,.1);}}
+
+.card:hover{transform:translateY(-4px);}
+.card-k:hover{box-shadow:0 12px 40px rgba(59,130,246,.22);}
+.card-g:hover{box-shadow:0 12px 40px rgba(37,211,102,.18);}
+
+/* Shimmer */
+.card::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent);z-index:3;transition:left .6s ease;}
+.card:hover::after{left:160%;}
+
+.card-inner{position:relative;z-index:2;padding:20px 22px;display:flex;align-items:center;gap:16px;}
+.icon-box{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.card-k .icon-box{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.2);}
+.card-g .icon-box{background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.18);}
+
+.card-body{flex:1;}
+.card-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;line-height:1;margin-bottom:2px;}
+.card-k .card-title{color:#93c5fd;}
+.card-g .card-title{color:#86efac;}
+.card-desc{font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.3px;}
+
+.card-arr{font-size:16px;opacity:.25;transition:opacity .2s,transform .2s;flex-shrink:0;}
+.card:hover .card-arr{opacity:.7;transform:translateX(5px);}
+
+/* BOTTOM */
+.clock{position:fixed;top:env(safe-area-inset-top,16px);right:16px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:rgba(255,255,255,.12);z-index:10;opacity:0;animation:fu .5s 1.8s ease forwards;}
+.footer{position:fixed;bottom:env(safe-area-inset-bottom,16px);font-size:8px;letter-spacing:4px;color:rgba(255,255,255,.1);text-transform:uppercase;z-index:10;opacity:0;animation:fu .5s 1.6s ease forwards;}
+
+@keyframes fu{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+
+/* ── PAGE TRANSITION OUT ── */
+#overlay{
+  position:fixed;inset:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:none;opacity:0;
+}
+#overlay.active{pointer-events:all;}
+.ov-circle{
+  width:0;height:0;
+  border-radius:50%;
+  position:absolute;
+  transform:translate(-50%,-50%);
+}
+.card-k-active #overlay .ov-circle{background:#3B82F6;}
+.card-g-active #overlay .ov-circle{background:#25D366;}
+
+@keyframes rippleOut{
+  0%{width:0;height:0;opacity:.9;}
+  100%{width:300vmax;height:300vmax;opacity:1;}
+}
+@keyframes labelIn{
+  from{opacity:0;transform:translate(-50%,-50%) scale(.8);}
+  to{opacity:1 !important;transform:translate(-50%,-50%) scale(1);}
+}
+.ov-label{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(48px,12vw,80px);
+  letter-spacing:10px;
+  color:#fff;
+  opacity:0;
+  z-index:2;
+  text-align:center;
+  -webkit-font-smoothing:antialiased;
+  text-shadow:0 0 40px rgba(255,255,255,.6),0 2px 0 rgba(0,0,0,.3);
+  font-weight:900;
+}
+/* Card tap effect */
+.card-tap{
+  animation:cardTap .25s cubic-bezier(.16,1,.3,1) forwards!important;
+}
+@keyframes cardTap{
+  0%{transform:scale(1);}
+  40%{transform:scale(.93);}
+  100%{transform:scale(.96);}
+}
+
+
+/* Flying icon animation */
+.fly-icon{
+  position:fixed;
+  font-size:clamp(36px,8vw,56px);
+  z-index:10000;
+  pointer-events:none;
+  opacity:0;
+  filter:drop-shadow(0 0 12px rgba(255,255,255,.5));
+}
+@keyframes flyKasir{
+  0%{opacity:0;transform:translate(0,0) rotate(-35deg) scale(.5);}
+  15%{opacity:1;}
+  85%{opacity:1;}
+  100%{opacity:0;transform:translate(var(--fx),var(--fy)) rotate(-35deg) scale(1.2);}
+}
+@keyframes flyDapur{
+  0%{opacity:0;transform:translate(0,0) rotate(-35deg) scale(.5);}
+  15%{opacity:1;}
+  85%{opacity:1;}
+  100%{opacity:0;transform:translate(var(--fx),var(--fy)) rotate(-35deg) scale(1.2);}
+}
+@keyframes trail{
+  0%{opacity:.7;transform:scaleX(0);}
+  50%{opacity:.4;transform:scaleX(1);}
+  100%{opacity:0;transform:scaleX(1);}
+}
+
 </style>
 </head>
 <body>
-  <div class="logo">DI<span>POJOK</span></div>
-  <div class="sub">Kitchen Management System</div>
 
-  <div class="cards">
-    <a class="card card-kasir" href="kasir-input.html">
-      <div class="card-icon">🧾</div>
-      <div class="card-title">KASIR</div>
-      <div class="card-desc">Input pesanan & kelola order</div>
-      <div class="card-arrow">→</div>
-    </a>
-    <a class="card card-kitchen" href="kitchen.html">
-      <div class="card-icon">🍳</div>
-      <div class="card-title">DAPUR</div>
-      <div class="card-desc">Monitor & sajikan pesanan</div>
-      <div class="card-arrow">→</div>
-    </a>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+<canvas id="cv"></canvas>
+
+<div class="wrap">
+  <div class="logo-wrap">
+    <div class="logo">
+      <span class="c0">D</span><span class="c1">I</span><span class="c2">P</span><span class="c3">O</span><span class="c4">J</span><span class="c5">O</span><span class="c6">K</span>
+    </div>
+    <div class="divider"></div>
+    <div class="tagline">Kitchen Management System</div>
   </div>
 
-  <div class="footer">© DIPOJOK · ALL RIGHTS RESERVED</div>
+  <div class="cards">
+    <a class="card card-k" href="kasir-input.html" onclick="goTo(event,'kasir-input.html','#3B82F6','KASIR')">
+      <div class="card-bg"></div>
+      <div class="card-border"></div>
+      <div class="card-inner">
+        <div class="icon-box">🧾</div>
+        <div class="card-body">
+          <div class="card-title">KASIR</div>
+          <div class="card-desc">Input pesanan & kelola order</div>
+        </div>
+        <div class="card-arr">→</div>
+      </div>
+    </a>
+    <a class="card card-g" href="kitchen.html" onclick="goTo(event,'kitchen.html','#25D366','DAPUR')">
+      <div class="card-bg"></div>
+      <div class="card-border"></div>
+      <div class="card-inner">
+        <div class="icon-box">🍳</div>
+        <div class="card-body">
+          <div class="card-title">DAPUR</div>
+          <div class="card-desc">Monitor & sajikan pesanan</div>
+        </div>
+        <div class="card-arr">→</div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<div class="clock" id="CLK"></div>
+<div class="footer">© DiPojok · All Rights Reserved</div>
 
 <script>
-if('serviceWorker' in navigator){
-  window.addEventListener('load', function(){
-    navigator.serviceWorker.register('/sw.js').catch(function(){});
-  });
+// Clock
+function tick(){
+  var d=new Date();
+  document.getElementById('CLK').textContent=
+    d.getHours().toString().padStart(2,'0')+':'+
+    d.getMinutes().toString().padStart(2,'0')+':'+
+    d.getSeconds().toString().padStart(2,'0');
 }
-</script>
+tick(); setInterval(tick,1000);
 
-<script>
+// Particle network
+(function(){
+  var cv=document.getElementById('cv');
+  var ctx=cv.getContext('2d');
+  var W,H,pts=[];
+  function resize(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
+  resize(); window.addEventListener('resize',resize);
+  for(var i=0;i<60;i++) pts.push({
+    x:Math.random()*2000,y:Math.random()*1200,
+    vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,
+    r:Math.random()*1.2+.4,a:Math.random()*.5+.1
+  });
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(var i=0;i<pts.length;i++){
+      for(var j=i+1;j<pts.length;j++){
+        var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;
+        var d=Math.sqrt(dx*dx+dy*dy);
+        if(d<120){
+          ctx.beginPath();
+          ctx.strokeStyle='rgba(255,255,255,'+(.05*(1-d/120))+')';
+          ctx.lineWidth=.5;
+          ctx.moveTo(pts[i].x,pts[i].y);
+          ctx.lineTo(pts[j].x,pts[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+    pts.forEach(function(p){
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,255,255,'+p.a+')';
+      ctx.fill();
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>W) p.vx*=-1;
+      if(p.y<0||p.y>H) p.vy*=-1;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// SW
 if('serviceWorker' in navigator){
-  window.addEventListener('load', function(){
+  window.addEventListener('load',function(){
     navigator.serviceWorker.register('sw.js').catch(function(){});
   });
 }
 </script>
+
+<!-- Flying icon -->
+<div class="fly-icon" id="flyIcon"></div>
+
+<!-- Transition overlay -->
+<div id="overlay">
+  <div class="ov-circle" id="ovCircle"></div>
+  <div class="ov-label" id="ovLabel"></div>
+</div>
+
+<script>
+function goTo(e, url, color, label){
+  e.preventDefault();
+  var card = e.currentTarget;
+  var rect = card.getBoundingClientRect();
+  var cx = rect.left + rect.width/2;
+  var cy = rect.top + rect.height/2;
+  var isKasir = url.indexOf('kasir') !== -1;
+
+  // Tap animation
+  card.classList.add('card-tap');
+
+  // Flying icon — struk untuk kasir, api untuk dapur
+  var flyEl = document.getElementById('flyIcon');
+  flyEl.textContent = isKasir ? '🧾' : '🍳';
+  flyEl.style.left = cx + 'px';
+  flyEl.style.top = cy + 'px';
+  flyEl.style.transform = 'translate(-50%,-50%) rotate(-35deg) scale(.5)';
+  flyEl.style.opacity = '0';
+
+  // Fly to top-right corner
+  var destX = window.innerWidth - cx + 60;
+  var destY = -(cy + 60);
+  flyEl.style.setProperty('--fx', destX + 'px');
+  flyEl.style.setProperty('--fy', destY + 'px');
+  flyEl.style.animation = 'none';
+  flyEl.offsetHeight; // reflow
+  flyEl.style.animation = (isKasir ? 'flyKasir' : 'flyDapur') + ' .6s cubic-bezier(.4,0,.2,1) forwards';
+
+  // Ripple
+  var ov = document.getElementById('overlay');
+  var circle = document.getElementById('ovCircle');
+  var lbl = document.getElementById('ovLabel');
+
+  circle.style.left = cx + 'px';
+  circle.style.top = cy + 'px';
+  circle.style.background = color;
+  circle.style.width = '0';
+  circle.style.height = '0';
+  circle.style.opacity = '0.95';
+
+  lbl._shown = false;
+  lbl.style.opacity = '0';
+  lbl.style.transform = 'translate(-50%,-50%) scale(.7)';
+  lbl.style.transition = '';
+  lbl.textContent = label;
+
+  ov.classList.add('active');
+  ov.style.opacity = '1';
+
+  var start = null;
+  var duration = 550;
+  var maxSize = Math.max(window.innerWidth, window.innerHeight) * 3;
+
+  function animate(ts){
+    if(!start) start = ts;
+    var p = Math.min((ts - start) / duration, 1);
+    var ease = 1 - Math.pow(1 - p, 3);
+    var size = ease * maxSize;
+    circle.style.width = size + 'px';
+    circle.style.height = size + 'px';
+
+    if(p > 0.38 && !lbl._shown){
+      lbl._shown = true;
+      lbl.style.opacity = '1';
+      lbl.style.transition = 'opacity .28s ease, transform .35s cubic-bezier(.16,1,.3,1)';
+      lbl.style.transform = 'translate(-50%,-50%) scale(1)';
+    }
+
+    if(p < 1){
+      requestAnimationFrame(animate);
+    } else {
+      setTimeout(function(){ window.location.href = url; }, 80);
+    }
+  }
+  requestAnimationFrame(animate);
+}
+</script>
+
 </body>
 </html>
