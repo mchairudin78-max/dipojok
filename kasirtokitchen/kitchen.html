@@ -9,12 +9,32 @@
 <meta name="theme-color" content="#0a0a0a">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-kitchen.svg">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>🍳 DAPUR — DiPojok</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 <style>
 :root{--red:#E8192C;--rd:#b01020;--wh:#FFF;--bk:#0A0A0A;--g1:#0e0e0e;--g2:#161616;--g3:#1f1f1f;--br:rgba(255,255,255,0.08);--gn:#25D366;--or:#FF8C00;--yw:#FFD600;--bl:#3B82F6;--tx:rgba(255,255,255,0.9);--mt:rgba(255,255,255,0.4);}
+
+/* ── LIGHT MODE ── */
+body.light{--bk:#f5f5f0;--g1:#ffffff;--g2:#f0f0eb;--g3:#e0e0d8;--br:rgba(0,0,0,0.09);--tx:rgba(0,0,0,0.85);--mt:rgba(0,0,0,0.4);}
+body.light .topbar{background:#ffffff;}
+body.light .mbar{background:#fafafa;}
+
+/* ── THEME TOGGLE ── */
+.theme-toggle{width:38px;height:22px;background:var(--g3);border-radius:11px;border:1px solid var(--br);cursor:pointer;position:relative;transition:background .3s;flex-shrink:0;}
+.theme-toggle::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--or);transition:transform .3s;box-shadow:0 1px 4px rgba(0,0,0,.3);}
+body.light .theme-toggle::after{transform:translateX(16px);}
+
+/* ── ANIMATED LOGO ── */
+.dipojok-logo{display:flex;align-items:baseline;gap:0;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;overflow:hidden;}
+.dipojok-logo .char{display:inline-block;opacity:0;transform:translateY(14px);animation:charIn .5s forwards;}
+.dipojok-logo .char.red{color:var(--or);}
+@keyframes charIn{to{opacity:1;transform:translateY(0);}}
+
+
+
 *{margin:0;padding:0;box-sizing:border-box;}
+html,body{overflow-x:hidden;}
 body{font-family:'Montserrat',sans-serif;background:var(--bk);color:var(--tx);min-height:100vh;}
 
 /* MODE BAR */
@@ -83,7 +103,10 @@ body{font-family:'Montserrat',sans-serif;background:var(--bk);color:var(--tx);mi
 @keyframes po{0%,100%{box-shadow:0 0 20px rgba(255,140,0,.18)}50%{box-shadow:0 0 34px rgba(255,140,0,.36)}}
 .oc.done{border:2px solid var(--gn);opacity:.58;}
 
-.nb{position:absolute;top:9px;right:9px;background:var(--red);color:#fff;font-size:9px;font-weight:900;letter-spacing:2px;text-transform:uppercase;padding:3px 8px;border-radius:2px;animation:bl 1s ease-in-out infinite;}
+.nb{position:absolute;top:9px;right:9px;color:#fff;font-size:9px;font-weight:900;letter-spacing:2px;text-transform:uppercase;padding:3px 8px;border-radius:2px;animation:bl 1s ease-in-out infinite;}
+.nb.nb-new{background:var(--gn);color:#000;}
+.nb.nb-lama{background:#e67e00;animation:bl 1.5s ease-in-out infinite;}
+.nb.nb-tlalu{background:var(--red);animation:bl 0.6s ease-in-out infinite;}
 @keyframes bl{0%,100%{opacity:1}50%{opacity:.32}}
 
 .ch{padding:12px 14px 10px;background:var(--g3);display:flex;align-items:center;justify-content:space-between;}
@@ -92,7 +115,9 @@ body{font-family:'Montserrat',sans-serif;background:var(--bk);color:var(--tx);mi
 .ctm{font-size:10px;color:var(--mt);margin-top:2px;}
 .ccu{font-size:10px;color:var(--or);font-weight:600;}
 .tmr{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;padding:5px 10px;border-radius:4px;min-width:60px;text-align:center;}
-.tmr.p{background:rgba(232,25,44,.18);color:var(--red);}
+.tmr.p,.tmr.p-new{background:rgba(37,211,102,.15);color:var(--gn);}
+.tmr.p-or{background:rgba(255,140,0,.18);color:var(--or);}
+.tmr.p-red{background:rgba(232,25,44,.18);color:var(--red);}
 .tmr.c{background:rgba(255,140,0,.18);color:var(--or);}
 .tmr.d{background:rgba(37,211,102,.13);color:var(--gn);font-size:13px;}
 
@@ -272,6 +297,51 @@ body{font-family:'Montserrat',sans-serif;background:var(--bk);color:var(--tx);mi
 #pwa-modal .pwa-step .st{font-size:13px;color:rgba(255,255,255,.8);line-height:1.4;}
 #pwa-modal .pwa-step .st b{color:#fff;}
 #pwa-modal .pwa-dismiss{width:100%;background:rgba(255,255,255,.08);border:none;border-radius:10px;color:rgba(255,255,255,.5);font-size:13px;padding:12px;cursor:pointer;}
+
+50%{opacity:.28;letter-spacing:13px;}}
+
+
+
+
+/* ── DAPUR SIAP ANIMATION ── */
+.ds-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:60px 24px;}
+.ds-emote{font-size:72px;animation:dsEmotePop 2.5s ease-in-out infinite;transform-origin:center;}
+@keyframes dsEmotePop{0%,100%{transform:scale(1) rotate(-5deg);}25%{transform:scale(1.18) rotate(5deg);}50%{transform:scale(1.08) rotate(-3deg);}75%{transform:scale(1.15) rotate(4deg);}}
+.ds-title{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:8px;color:var(--tx);opacity:0;transform:translateY(20px);animation:dsFadeUp .8s .3s cubic-bezier(.22,1,.36,1) forwards;}
+.ds-sub{font-size:13px;letter-spacing:3px;color:var(--mt);opacity:0;animation:dsTyping .6s .9s forwards;}
+.ds-dot{display:inline-block;animation:dsDot 1.4s ease-in-out infinite;}
+.ds-dot:nth-child(2){animation-delay:.2s;}
+.ds-dot:nth-child(3){animation-delay:.4s;}
+@keyframes dsFadeUp{to{opacity:1;transform:translateY(0);}}
+@keyframes dsTyping{to{opacity:1;}}
+@keyframes dsDot{0%,80%,100%{opacity:.3;transform:translateY(0);}40%{opacity:1;transform:translateY(-4px);}}
+
+/* ── LIGHT MODE ORDER TEXT FIXES ── */
+body.light .oc{background:#ffffff;border-color:rgba(0,0,0,0.12);}
+body.light .on{color:#111111;}
+body.light .ci li{color:#111111;}
+body.light .in{color:#111111;}
+body.light .cnote{color:#333333;background:rgba(0,0,0,0.05);border-color:rgba(0,0,0,0.1);}
+body.light .tmr{color:#333333;background:rgba(0,0,0,0.07);}
+body.light .tmr.c{color:#cc6600;}
+body.light .tmr.d{color:#1a7a1a;}
+body.light .sh .st{color:#111111;}
+body.light .og{color:#111111;}
+body.light .bdl{color:#1a7a1a;background:rgba(0,128,0,0.08);}
+body.light .partial-badge{color:#cc6600;background:rgba(200,100,0,0.1);}
+body.light .iq{color:#444444;}
+body.light .progress-bar{background:rgba(0,0,0,0.1);}
+body.light .btn-mulai{color:#000000;}
+body.light .btn-sajikan{color:#000000;}
+body.light .btn-sajikan-all{color:#000000;}
+body.light .ds-title{color:#111111;}
+body.light .ds-sub{color:#444444;}
+body.light .ds-emote{filter:none;}
+body.light .ek{color:#111111;}
+body.light .et{color:#111111;}
+body.light .es{color:#444444;}
+
+/* ── SCROLLBAR INVISIBLE ── */
 </style>
 </head>
 <body>
@@ -296,8 +366,9 @@ body{font-family:'Montserrat',sans-serif;background:var(--bk);color:var(--tx);mi
     <div class="bi">🍳</div>
     <div><div class="bn">DAPUR <span>DIPOJOK</span></div><div class="bs">Kitchen Display System</div></div>
     <div class="badge">KITCHEN</div>
+    
   </div>
-  <div class="tr">
+  <div class="tr"><button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle mode"></button>
     <div class="clk" id="CLK">00:00:00</div>
     <a href="#" class="alink" id="KASIR_LINK">← Kasir</a>
   </div>
@@ -317,7 +388,13 @@ body{font-family:'Montserrat',sans-serif;background:var(--bk);color:var(--tx);mi
 </div>
 
 <div class="km" id="KM">
-  <div class="ek"><div class="ei">🍽️</div><div class="et">DAPUR SIAP</div><div class="es">Menunggu pesanan dari kasir...</div></div>
+  <div class="ek" id="dapurSiapEl">
+    <div class="ds-wrap">
+      <div class="ds-emote">🍽️</div>
+      <div class="ds-title">DAPUR SIAP</div>
+      <div class="ds-sub">Menunggu pesanan dari kasir<span class="ds-dot">.</span><span class="ds-dot">.</span><span class="ds-dot">.</span></div>
+    </div>
+  </div>
 </div>
 
 <!-- PRINT MODAL -->
@@ -365,9 +442,22 @@ var LH_PORT = window.location.port || '3000';
 var LH_BASE = 'http://' + LH_HOST + ':' + LH_PORT;
 var LH_WS   = 'ws://'   + LH_HOST + ':' + LH_PORT;
 
-// Fix kasir link
-document.getElementById('KASIR_LINK').href =
-  (window.location.protocol === 'file:') ? 'kasir-input.html' : '/kasir';
+// Fix kasir link — auto detect platform
+(function(){
+  var p = window.location.pathname;
+  var isGithub = window.location.hostname.indexOf('github.io') !== -1;
+  var isFile = window.location.protocol === 'file:';
+  var link;
+  if(isFile || isGithub){
+    // GitHub Pages atau file lokal — pakai relative path
+    link = p.replace('kitchen.html','kasir-input.html').replace('/kitchen','kasir-input.html');
+    if(link === p) link = 'kasir-input.html';
+  } else {
+    // Netlify atau localhost server
+    link = '/kasir';
+  }
+  document.getElementById('KASIR_LINK').href = link;
+})();
 
 var _ws = null, _wsReconnTimer = null;
 
@@ -678,7 +768,7 @@ function renderKitchen(){
   var done=orders.filter(function(o){return o.kitchenStatus==='done'||o.kitchenStatus==='delivered';}).slice(-6);
 
   if(!pending.length&&!cooking.length&&!done.length){
-    document.getElementById('KM').innerHTML='<div class="ek"><div class="ei">🍽️</div><div class="et">DAPUR SIAP</div><div class="es">Menunggu pesanan dari kasir...</div></div>';
+    document.getElementById('KM').innerHTML='<div class="ek" id="dapurSiapEl"><div class="ds-wrap"><div class="ds-emote">🍽️</div><div class="ds-title">DAPUR SIAP</div><div class="ds-sub">Menunggu pesanan dari kasir<span class=\"ds-dot\">.</span><span class=\"ds-dot\">.</span><span class=\"ds-dot\">.</span></div></div></div>';
     return;
   }
 
@@ -712,9 +802,11 @@ function buildCard(o){
   var elapsed=Math.floor((Date.now()-(st||Date.now()))/1000);
   var mm=Math.floor(elapsed/60).toString().padStart(2,'0'),ss=(elapsed%60).toString().padStart(2,'0');
 
+  var minE=Math.floor(elapsed/60);
+  var pendClr=minE>=20?'p-red':minE>=10?'p-or':'p';
   var tmrH=id
     ?'<div class="tmr d">✅ SELESAI</div>'
-    :'<div class="tmr '+(ic?'c':'p')+'" id="tmr-'+k+'">'+mm+':'+ss+'</div>';
+    :'<div class="tmr '+(ic?'c':pendClr)+'" id="tmr-'+k+'">'+mm+':'+ss+'</div>';
 
   var checks = itemChecks[k]||{};
   var items = o.items||[];
@@ -776,11 +868,20 @@ function buildCard(o){
   // Footer buttons
   var fh='';
   if(id){
+    var finishTime=o.deliveredAt||o.doneAt;
+    var finishTs=finishTime?new Date(finishTime).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}):'—';
+    var finishSec=finishTime?Math.floor((Date.now()-finishTime)/1000):0;
+    var finishMm=Math.floor(finishSec/60).toString().padStart(2,'0');
+    var finishSs=(finishSec%60).toString().padStart(2,'0');
     fh='<div class="bdl">'+(o.kitchenStatus==='delivered'?'📦 SUDAH DIANTAR':'✅ SUDAH DISAJIKAN')+'</div>'
-      +'<div class="sajikan-row" style="margin-top:7px;">'
+      +'<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin:6px 0 4px;padding:6px;background:rgba(37,211,102,.05);border-radius:4px;">'
+      +'<span style="font-size:12px;color:var(--mt);">⏰ Selesai: <b style="color:var(--gn);">'+finishTs+'</b></span>'
+      +'<span style="font-size:12px;color:var(--mt);">· <b id="kfin-'+o._key+'" style="color:var(--gn);">'+finishMm+':'+finishSs+'</b> lalu</span>'
+      +'</div>'
+      +'<div class="sajikan-row" style="margin-top:4px;">'
       +'<button class="bp" onclick="openPM(\''+k+'\')" style="width:100%;">🖨️ Cetak Struk</button>'
       +'</div>';
-  } else if(ic){
+    } else if(ic){
     var allChecked = totalCheckedCount===items.length && items.length>0;
     fh='<div class="sajikan-row">'
       +'<button class="btn-sajikan" onclick="sajikanChecked(\''+k+'\')" '+(newlyCheckedCount===0?'disabled':'')+' title="Sajikan item yang baru dicentang">'
@@ -804,7 +905,13 @@ function buildCard(o){
     : '';
 
   return '<div class="oc '+o.kitchenStatus+(ic?' pulsing':'')+(id?' ':'')+'" data-order="'+k+'">'
-    +(ip?'<div class="nb">BARU!</div>':'')
+    +(ip?(function(){
+      var elp=Math.floor((Date.now()-(o.timestamp||Date.now()))/1000);
+      var min=Math.floor(elp/60);
+      if(min>=20) return '<div class="nb nb-tlalu" id="nb-'+k+'">TERLALU LAMA!</div>';
+      if(min>=10) return '<div class="nb nb-lama" id="nb-'+k+'">LAMA</div>';
+      return '<div class="nb nb-new" id="nb-'+k+'">BARU!</div>';
+    })():'')
     +'<div class="ch"><div>'
     +'<div class="cid">Pesanan #'+o.orderNumber+'</div>'
     +'<div class="ctbl">MEJA '+o.table+'</div>'
@@ -827,11 +934,43 @@ function updateStats(){
 setInterval(function(){
   orders.forEach(function(o){
     if(o.kitchenStatus==='done'||o.kitchenStatus==='delivered') return;
-    var el=document.getElementById('tmr-'+o._key); if(!el) return;
-    var st=o.kitchenStatus==='cooking'?(o.cookingStartAt||o.timestamp):o.timestamp;
-    var elapsed=Math.floor((Date.now()-(st||Date.now()))/1000);
-    el.textContent=Math.floor(elapsed/60).toString().padStart(2,'0')+':'+(elapsed%60).toString().padStart(2,'0');
-    if(o.kitchenStatus==='cooking'&&elapsed>900) el.style.color='#ff4444';
+    var k=o._key;
+    // Update timer
+    var el=document.getElementById('tmr-'+k); if(el){
+      var st=o.kitchenStatus==='cooking'?(o.cookingStartAt||o.timestamp):o.timestamp;
+      var elapsed=Math.floor((Date.now()-(st||Date.now()))/1000);
+      var min=Math.floor(elapsed/60);
+      el.textContent=Math.floor(elapsed/60).toString().padStart(2,'0')+':'+(elapsed%60).toString().padStart(2,'0');
+      // Warna timer cooking: hijau < 10m, oranye 10-20m, merah > 20m
+      if(o.kitchenStatus==='cooking'){
+        if(min>=20){ el.style.color='var(--red)'; el.style.background='rgba(232,25,44,.18)'; }
+        else if(min>=10){ el.style.color='var(--or)'; el.style.background='rgba(255,140,0,.18)'; }
+        else { el.style.color='var(--gn)'; el.style.background='rgba(37,211,102,.15)'; }
+      }
+      // Warna timer pending: hijau < 10m, oranye 10-20m, merah > 20m
+      if(o.kitchenStatus==='pending'){
+        if(min>=20){ el.style.color='var(--red)'; el.style.background='rgba(232,25,44,.18)'; }
+        else if(min>=10){ el.style.color='var(--or)'; el.style.background='rgba(255,140,0,.18)'; }
+        else { el.style.color='var(--gn)'; el.style.background='rgba(37,211,102,.15)'; }
+      }
+    }
+    // Update badge BARU/LAMA/TERLALU LAMA untuk pending
+    if(o.kitchenStatus==='pending'){
+      var nb=document.getElementById('nb-'+k);
+      if(nb){
+        var min=Math.floor((Date.now()-(o.timestamp||Date.now()))/60000);
+        if(min>=20){
+          nb.textContent='TERLALU LAMA!';
+          nb.className='nb nb-tlatu';
+        } else if(min>=10){
+          nb.textContent='LAMA';
+          nb.className='nb nb-lama';
+        } else {
+          nb.textContent='BARU!';
+          nb.className='nb nb-new';
+        }
+      }
+    }
   });
 },1000);
 
@@ -909,17 +1048,20 @@ function unlockAudio(){
 // Auto-unlock pada interaksi pertama user (tap/klik mana saja)
 function _autoUnlock(){ if(!_audioUnlocked){ unlockAudio(); } }
 document.addEventListener('touchstart', _autoUnlock, {once:true, passive:true});
+document.addEventListener('touchend',   _autoUnlock, {once:true, passive:true});
 document.addEventListener('click',      _autoUnlock, {once:true, passive:true});
-// Coba unlock langsung saat halaman load (works di beberapa browser)
+document.addEventListener('keydown',    _autoUnlock, {once:true, passive:true});
+// Coba unlock langsung saat load
 window.addEventListener('load', function(){
   try{
     var ctx = new(window.AudioContext||window.webkitAudioContext)();
     if(ctx.state === 'running'){
       _audioCtx = ctx; _audioUnlocked = true;
-      var btn = document.getElementById('BELL_BTN');
-      if(btn){ btn.classList.add('unlocked'); }
     } else {
-      ctx.close();
+      // Buat & resume — biar browser tahu kita minta audio
+      ctx.resume().then(function(){
+        if(ctx.state==='running'){ _audioCtx=ctx; _audioUnlocked=true; }
+      }).catch(function(){});
     }
   }catch(e){}
 });
@@ -956,6 +1098,22 @@ function snd(type){
   }catch(e){}
 }
 function flash(msg,cls){ var e=document.getElementById('FL'); e.textContent=msg; e.className='flash show '+(cls||'or'); clearTimeout(window._ft); window._ft=setTimeout(function(){e.classList.remove('show');},3600); }
+// Update timer selesai kitchen
+setInterval(function(){
+  if(typeof orders==='undefined') return;
+  orders.forEach(function(o){
+    if(o.kitchenStatus!=='done'&&o.kitchenStatus!=='delivered') return;
+    var el=document.getElementById('kfin-'+o._key);
+    if(!el) return;
+    var finishTime=o.deliveredAt||o.doneAt;
+    if(!finishTime) return;
+    var sec=Math.floor((Date.now()-finishTime)/1000);
+    var mm=Math.floor(sec/60).toString().padStart(2,'0');
+    var ss=(sec%60).toString().padStart(2,'0');
+    el.textContent=mm+':'+ss;
+  });
+},1000);
+
 function tick(){ document.getElementById('CLK').textContent=new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
 tick(); setInterval(tick,1000);
 
@@ -1044,6 +1202,66 @@ function hideInstall(){
 window.addEventListener('appinstalled', function(){
   hideBanner();
   hideInstall();
+});
+</script>
+
+
+
+
+
+
+<script>
+// Logo animation
+
+
+// Theme toggle
+function toggleTheme(){
+  document.body.classList.toggle('light');
+  localStorage.setItem('theme', document.body.classList.contains('light')?'light':'dark');
+}
+(function(){
+  if(localStorage.getItem('theme')==='light') document.body.classList.add('light');
+})();
+
+
+</script>
+
+
+
+
+
+<script>
+function initDapurSiap(){
+  var sub = document.getElementById('dsSub');
+  if(!sub) return;
+  sub.innerHTML = 'Menunggu pesanan dari kasir'
+    + '<span class="ds-dot">.</span>'
+    + '<span class="ds-dot">.</span>'
+    + '<span class="ds-dot">.</span>';
+  
+  // Ganti emote secara bergantian
+  var emotes = ['🍳','🍽️','🔪','🥘','🍜','👨‍🍳'];
+  var ei = 0;
+  var el = document.getElementById('dsEmote');
+  if(!el) return;
+  setInterval(function(){
+    if(!document.getElementById('dsEmote')) return;
+    ei = (ei+1) % emotes.length;
+    var e = document.getElementById('dsEmote');
+    if(e){
+      e.style.transform='scale(0)';
+      e.style.transition='transform .2s';
+      setTimeout(function(){
+        var ee = document.getElementById('dsEmote');
+        if(ee){ ee.textContent=emotes[ei]; ee.style.transform=''; ee.style.transition=''; }
+      }, 200);
+    }
+  }, 3000);
+}
+
+// Panggil saat halaman load jika element sudah ada
+document.addEventListener('DOMContentLoaded', function(){
+  if(document.getElementById('dapurSiapEl')) initDapurSiap();
 });
 </script>
 
