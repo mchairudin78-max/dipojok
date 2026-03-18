@@ -14,7 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-:root{--red:#E8192C;--gn:#25D366;--bl:#3B82F6;}
+:root{--red:#E8192C;--gn:#25D366;--bl:#3B82F6;--pu:#8B5CF6;}
 html,body{height:100%;overflow:hidden;background:#080808;font-family:'DM Sans',sans-serif;color:#fff;user-select:none;}
 canvas{position:fixed;inset:0;z-index:0;}
 .orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;}
@@ -50,15 +50,20 @@ canvas{position:fixed;inset:0;z-index:0;}
 .card{display:block;text-decoration:none;border-radius:18px;overflow:hidden;position:relative;opacity:0;transform:translateY(28px);transition:transform .2s cubic-bezier(.16,1,.3,1),box-shadow .2s;}
 .card:nth-child(1){animation:fu .7s 1.2s cubic-bezier(.16,1,.3,1) forwards;}
 .card:nth-child(2){animation:fu .7s 1.35s cubic-bezier(.16,1,.3,1) forwards;}
+.card:nth-child(3){animation:fu .7s 1.5s cubic-bezier(.16,1,.3,1) forwards;}
 .card:active{transform:scale(.96)!important;}
 
 .card-bg{position:absolute;inset:0;z-index:0;}
 .card-k .card-bg{background:linear-gradient(135deg,rgba(59,130,246,.18) 0%,rgba(8,12,24,.97) 65%);}
 .card-g .card-bg{background:linear-gradient(135deg,rgba(37,211,102,.14) 0%,rgba(6,14,8,.97) 65%);}
 
+.card-p .card-bg{background:linear-gradient(135deg,rgba(139,92,246,.15) 0%,rgba(10,8,20,.97) 65%);}
+
 .card-border{position:absolute;inset:0;border-radius:18px;border:1px solid;z-index:1;pointer-events:none;}
 .card-k .card-border{border-color:rgba(59,130,246,.35);animation:bpk 3.5s 2s ease-in-out infinite;}
 .card-g .card-border{border-color:rgba(37,211,102,.3);animation:bpg 3.5s 2.2s ease-in-out infinite;}
+.card-p .card-border{border-color:rgba(139,92,246,.3);animation:bpp 3.5s 2.4s ease-in-out infinite;}
+@keyframes bpp{0%,100%{border-color:rgba(139,92,246,.25);}50%{border-color:rgba(139,92,246,.55);box-shadow:0 0 20px rgba(139,92,246,.1);}}
 @keyframes bpk{0%,100%{border-color:rgba(59,130,246,.3);}50%{border-color:rgba(59,130,246,.65);box-shadow:0 0 20px rgba(59,130,246,.12);}}
 @keyframes bpg{0%,100%{border-color:rgba(37,211,102,.25);}50%{border-color:rgba(37,211,102,.55);box-shadow:0 0 20px rgba(37,211,102,.1);}}
 
@@ -74,11 +79,13 @@ canvas{position:fixed;inset:0;z-index:0;}
 .icon-box{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
 .card-k .icon-box{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.2);}
 .card-g .icon-box{background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.18);}
+.card-p .icon-box{background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.2);}
 
 .card-body{flex:1;}
 .card-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;line-height:1;margin-bottom:2px;}
 .card-k .card-title{color:#93c5fd;}
 .card-g .card-title{color:#86efac;}
+.card-p .card-title{color:#c4b5fd;}
 .card-desc{font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.3px;}
 
 .card-arr{font-size:16px;opacity:.25;transition:opacity .2s,transform .2s;flex-shrink:0;}
@@ -96,6 +103,10 @@ canvas{position:fixed;inset:0;z-index:0;}
   display:flex;align-items:center;justify-content:center;
   pointer-events:none;opacity:0;
 }
+.card:hover{transform:translateY(-4px);}
+.card-k:hover{box-shadow:0 12px 40px rgba(59,130,246,.22);}
+.card-g:hover{box-shadow:0 12px 40px rgba(37,211,102,.18);}
+.card-p:hover{box-shadow:0 12px 40px rgba(139,92,246,.2);}
 #overlay.active{pointer-events:all;}
 .ov-circle{
   width:0;height:0;
@@ -105,6 +116,7 @@ canvas{position:fixed;inset:0;z-index:0;}
 }
 .card-k-active #overlay .ov-circle{background:#3B82F6;}
 .card-g-active #overlay .ov-circle{background:#25D366;}
+.card-p-active #overlay .ov-circle{background:#8B5CF6;}
 
 @keyframes rippleOut{
   0%{width:0;height:0;opacity:.9;}
@@ -205,6 +217,18 @@ canvas{position:fixed;inset:0;z-index:0;}
         <div class="card-body">
           <div class="card-title">DAPUR</div>
           <div class="card-desc">Monitor & sajikan pesanan</div>
+        </div>
+        <div class="card-arr">→</div>
+      </div>
+    </a>
+    <a class="card card-p" href="panduan.html" onclick="goTo(event,'panduan.html','#8B5CF6','PANDUAN')">
+      <div class="card-bg"></div>
+      <div class="card-border"></div>
+      <div class="card-inner">
+        <div class="icon-box">📖</div>
+        <div class="card-body">
+          <div class="card-title">PANDUAN</div>
+          <div class="card-desc">Cara pakai sistem DiPojok</div>
         </div>
         <div class="card-arr">→</div>
       </div>
