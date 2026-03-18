@@ -197,9 +197,20 @@ body{font-family:'Montserrat',sans-serif;background:var(--bk);color:var(--tx);mi
 
 /* PARTIAL DONE INDICATOR on card header */
 .partial-badge{background:rgba(37,211,102,.2);color:var(--gn);font-size:9px;font-weight:700;letter-spacing:1px;padding:2px 8px;border-radius:10px;margin-top:3px;display:inline-block;}
-.bell-unlock{position:fixed;bottom:18px;right:18px;z-index:900;background:var(--or);color:#000;border:none;border-radius:50%;width:54px;height:54px;font-size:24px;cursor:pointer;box-shadow:0 4px 18px rgba(255,140,0,.6);display:flex;align-items:center;justify-content:center;animation:bellpulse 1.4s infinite;}
-@keyframes bellpulse{0%,100%{transform:scale(1);}50%{transform:scale(1.13);}}
-.bell-unlock.unlocked{background:var(--gn);animation:none;box-shadow:0 2px 8px rgba(37,211,102,.4);}
+.bell-unlock{
+  width:36px;height:36px;
+  background:rgba(37,211,102,.12);
+  color:var(--gn);
+  border:1px solid rgba(37,211,102,.3);
+  border-radius:50%;
+  font-size:17px;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+  flex-shrink:0;
+}
+.bell-unlock:hover{background:rgba(37,211,102,.25);box-shadow:0 0 12px rgba(37,211,102,.3);}
+.bell-unlock.unlocked{background:var(--gn);color:#000;border-color:var(--gn);animation:none;box-shadow:0 2px 8px rgba(37,211,102,.4);}
 
 
 .ek{text-align:center;padding:66px 24px;color:var(--mt);}
@@ -298,11 +309,6 @@ body{font-family:'Montserrat',sans-serif;background:var(--bk);color:var(--tx);mi
 #pwa-modal .pwa-step .st b{color:#fff;}
 #pwa-modal .pwa-dismiss{width:100%;background:rgba(255,255,255,.08);border:none;border-radius:10px;color:rgba(255,255,255,.5);font-size:13px;padding:12px;cursor:pointer;}
 
-50%{opacity:.28;letter-spacing:13px;}}
-
-
-
-
 /* ── DAPUR SIAP ANIMATION ── */
 .ds-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:60px 24px;}
 .ds-emote{font-size:72px;animation:dsEmotePop 2.5s ease-in-out infinite;transform-origin:center;}
@@ -342,6 +348,107 @@ body.light .et{color:#111111;}
 body.light .es{color:#444444;}
 
 /* ── SCROLLBAR INVISIBLE ── */
+
+/* ══════════════════════════════════
+   MENU STOCK PANEL (kanan dapur)
+══════════════════════════════════ */
+#stockPanel{
+  position:fixed;top:0;right:0;bottom:0;
+  width:260px;
+  background:var(--g1);
+  border-left:2px solid var(--br);
+  z-index:200;
+  display:flex;flex-direction:column;
+  transform:translateX(0);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  box-shadow:-6px 0 28px rgba(0,0,0,.5);
+}
+#stockPanel.hidden{transform:translateX(100%);}
+
+#stockToggleBtn{
+  position:fixed;right:0;top:50%;
+  transform:translateY(-50%);
+  z-index:201;
+  width:30px;height:68px;
+  background:var(--g3);
+  border:1px solid var(--br);
+  border-right:none;
+  border-radius:8px 0 0 8px;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  writing-mode:vertical-rl;
+  font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--mt);
+  transition:right .3s cubic-bezier(.4,0,.2,1), background .2s, color .2s;
+  padding:6px 3px;
+}
+#stockToggleBtn:hover{background:var(--g2);color:var(--tx);}
+#stockToggleBtn.panel-open{right:260px;background:rgba(37,211,102,.12);color:var(--gn);border-color:rgba(37,211,102,.3);}
+
+.sp-header{
+  padding:11px 13px 9px;
+  border-bottom:2px solid var(--or);
+  background:var(--g2);
+  flex-shrink:0;
+}
+.sp-title{font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:3px;color:var(--or);margin-bottom:1px;}
+.sp-sub{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--mt);}
+
+.sp-body{flex:1;overflow-y:auto;padding:6px 0;}
+.sp-body::-webkit-scrollbar{width:2px;}
+.sp-body::-webkit-scrollbar-thumb{background:var(--g3);}
+
+.sp-cat-label{
+  font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  color:var(--mt);padding:8px 12px 4px;
+  display:flex;align-items:center;gap:6px;
+}
+.sp-cat-label::after{content:'';flex:1;height:1px;background:var(--br);}
+
+.sp-item{
+  display:flex;align-items:center;
+  padding:6px 12px;
+  border-bottom:1px solid var(--br);
+  gap:7px;
+}
+.sp-item-name{font-size:11px;font-weight:600;flex:1;line-height:1.3;color:var(--tx);}
+.sp-item.not-ready .sp-item-name{color:var(--mt);text-decoration:line-through;}
+
+.sp-toggle{
+  position:relative;
+  width:42px;height:22px;
+  border-radius:11px;
+  cursor:pointer;
+  flex-shrink:0;
+  border:none;
+  transition:background .2s;
+  -webkit-tap-highlight-color:transparent;
+}
+.sp-toggle::after{
+  content:'';
+  position:absolute;top:3px;left:3px;
+  width:16px;height:16px;
+  border-radius:50%;
+  background:#fff;
+  transition:transform .2s;
+  box-shadow:0 1px 3px rgba(0,0,0,.3);
+}
+.sp-toggle.ready{background:var(--gn);}
+.sp-toggle.ready::after{transform:translateX(20px);}
+.sp-toggle.notready{background:rgba(232,25,44,.45);}
+
+.sp-badge{
+  font-size:8px;font-weight:700;letter-spacing:1px;padding:1px 5px;border-radius:3px;flex-shrink:0;
+}
+.sp-badge.ready{background:rgba(37,211,102,.12);color:var(--gn);}
+.sp-badge.notready{background:rgba(232,25,44,.12);color:var(--red);}
+
+.km-shifted{padding-right:276px !important;}
+
+.sp-footer{padding:8px 12px;border-top:1px solid var(--br);background:var(--g2);flex-shrink:0;text-align:center;}
+.sp-count{font-size:10px;color:var(--mt);}
+.sp-count b{color:var(--gn);}
+.sp-count b.red{color:var(--red);}
 </style>
 
 <script>
@@ -382,15 +489,15 @@ body.light .es{color:#444444;}
 </div>
 
 <!-- TOPBAR -->
-<button class="bell-unlock" id="BELL_BTN" onclick="unlockAudio()" title="Aktifkan suara notifikasi">🔔</button>
 <div class="topbar">
   <div class="brand">
     <div class="bi">🍳</div>
     <div><div class="bn">DAPUR <span>DIPOJOK</span></div><div class="bs">Kitchen Display System</div></div>
     <div class="badge">KITCHEN</div>
-    
   </div>
-  <div class="tr"><button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle mode"></button>
+  <div class="tr">
+    <button class="bell-unlock" id="BELL_BTN" onclick="unlockAudio()" title="Aktifkan suara notifikasi">🔔</button>
+    <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle mode"></button>
     <div class="clk" id="CLK">00:00:00</div>
     <a href="#" class="alink" id="KASIR_LINK">← Kasir</a>
   </div>
@@ -417,6 +524,19 @@ body.light .es{color:#444444;}
       <div class="ds-sub">Menunggu pesanan dari kasir<span class="ds-dot">.</span><span class="ds-dot">.</span><span class="ds-dot">.</span></div>
     </div>
   </div>
+</div>
+
+<!-- STOCK PANEL TOGGLE -->
+<button id="stockToggleBtn" class="panel-open" onclick="toggleStockPanel()">MENU STOCK</button>
+
+<!-- STOCK PANEL -->
+<div id="stockPanel">
+  <div class="sp-header">
+    <div class="sp-title">📋 MENU STOCK</div>
+    <div class="sp-sub">Ready / Not Ready per item</div>
+  </div>
+  <div class="sp-body" id="SP_BODY"></div>
+  <div class="sp-footer"><div class="sp-count" id="SP_COUNT">—</div></div>
 </div>
 
 <!-- PRINT MODAL -->
@@ -1137,6 +1257,116 @@ document.getElementById('RMODAL').addEventListener('click',function(e){if(e.targ
 // Auto-detect
 if(window.location.protocol==='file:') setMode('firebase');
 else setMode('localhost');
+</script>
+
+<script>
+/* ══════════════════════════════════════════
+   MENU STOCK PANEL JS
+══════════════════════════════════════════ */
+var MENU_STOCK_KEY = 'dipojok_menu_stock';
+
+var STOCK_MENU = {
+  makanan:{label:'🍽️ Makanan Berat',items:[
+    'Ayam Kalasan','Ayam Cheese','Ayam Mentega',
+    'Ayam Nasi Uduk','Ayam Sambal Matah','Ayam Saos Mentai',
+    'Ayam Saos Thailand','Ayam Asam Manis','Opor Ayam',
+    'Mie Kuah Pojok','Mie Goreng Pojok'
+  ]},
+  snack:{label:'🍟 Snack',items:[
+    'Roti Maryam','Cheese Cake Lotus',
+    'Toast Brulee','Toast Tiramisu',
+    'Big Bang Platter','Party Platter',
+    'Mix Platter','Samosa',
+    'Kentang Goreng','Singkong Goreng',
+    'Dimsum Mentai','Dimsum Mix',
+    'Dimsum Ayam','Dimsum Party'
+  ]},
+  additional:{label:'➕ Additional',items:[
+    'Nasi','Telur','Ice Cream',
+    'Air Mineral','Espresso Arabica',
+    'Espresso Robusta','Sirup All Varian'
+  ]}
+};
+
+function getStock(){
+  try{ return JSON.parse(localStorage.getItem(MENU_STOCK_KEY)||'{}'); }
+  catch(e){ return {}; }
+}
+function saveStock(s){
+  try{
+    localStorage.setItem(MENU_STOCK_KEY, JSON.stringify(s));
+    localStorage.setItem(MENU_STOCK_KEY+'_ts', Date.now());
+  }catch(e){}
+}
+
+function toggleStock(name){
+  var s = getStock();
+  var cur = s[name] !== false;
+  s[name] = !cur;
+  saveStock(s);
+  renderStockPanel();
+  flash((s[name] ? '✅ ' : '❌ ') + name + (s[name] ? ' — READY' : ' — NOT READY'), s[name] ? 'gn' : 'rd');
+}
+
+function renderStockPanel(){
+  var stock = getStock();
+  var html = '';
+  var totalReady = 0, totalAll = 0;
+
+  Object.keys(STOCK_MENU).forEach(function(cat){
+    var c = STOCK_MENU[cat];
+    html += '<div class="sp-cat-label">' + c.label + '</div>';
+    c.items.forEach(function(name){
+      var ready = stock[name] !== false;
+      totalAll++;
+      if(ready) totalReady++;
+      var esc = name.replace(/'/g, "\\'");
+      html += '<div class="sp-item' + (ready ? '' : ' not-ready') + '">';
+      html += '<span class="sp-item-name">' + name + '</span>';
+      html += '<span class="sp-badge ' + (ready ? 'ready' : 'notready') + '">' + (ready ? 'READY' : 'NO') + '</span>';
+      html += '<button class="sp-toggle ' + (ready ? 'ready' : 'notready') + '" onclick="toggleStock(\'' + esc + '\')"></button>';
+      html += '</div>';
+    });
+  });
+
+  document.getElementById('SP_BODY').innerHTML = html;
+  var notReady = totalAll - totalReady;
+  document.getElementById('SP_COUNT').innerHTML =
+    '<b>' + totalReady + '</b> ready &nbsp;·&nbsp; <b class="red">' + notReady + '</b> not ready';
+}
+
+function toggleStockPanel(){
+  var panel = document.getElementById('stockPanel');
+  var btn   = document.getElementById('stockToggleBtn');
+  var km    = document.getElementById('KM');
+  var open  = !panel.classList.contains('hidden');
+  panel.classList.toggle('hidden', open);
+  btn.classList.toggle('panel-open', !open);
+  km.classList.toggle('km-shifted', !open);
+  try{ localStorage.setItem('dipojok_stock_panel', open ? '0' : '1'); }catch(e){}
+}
+
+// Init
+(function(){
+  var saved = localStorage.getItem('dipojok_stock_panel');
+  var panel = document.getElementById('stockPanel');
+  var btn   = document.getElementById('stockToggleBtn');
+  var km    = document.getElementById('KM');
+  if(saved === '0'){
+    panel.classList.add('hidden');
+    btn.classList.remove('panel-open');
+    km.classList.remove('km-shifted');
+  } else {
+    km.classList.add('km-shifted');
+  }
+  renderStockPanel();
+})();
+
+window.addEventListener('storage', function(e){
+  if(e.key === MENU_STOCK_KEY || e.key === MENU_STOCK_KEY + '_ts'){
+    renderStockPanel();
+  }
+});
 </script>
 
 <script>
