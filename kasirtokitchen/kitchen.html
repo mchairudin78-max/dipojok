@@ -86,13 +86,13 @@ body{font-family:'Montserrat',sans-serif;background:var(--bk);color:var(--tx);mi
 .flash.rd{background:var(--red);color:#fff;box-shadow:0 8px 28px rgba(232,25,44,.6);}
 
 /* MAIN */
-.km{padding:14px 16px;}
+.km{padding:14px 16px;-webkit-overflow-scrolling:touch;}
 .sh{display:flex;align-items:center;margin-bottom:10px;}
 .st{font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:2px;}
 .st .r{color:var(--red);}
 .st .o{color:var(--or);}
 .st .g{color:var(--gn);}
-.og{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr));gap:14px;margin-bottom:22px;}
+.og{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:12px;margin-bottom:18px;}
 
 /* CARD */
 .oc{background:var(--g2);border-radius:6px;overflow:hidden;transition:border-color .3s,box-shadow .3s;animation:si .42s cubic-bezier(.16,1,.3,1) both;position:relative;}
@@ -310,14 +310,34 @@ body{font-family:'Montserrat',sans-serif;background:var(--bk);color:var(--tx);mi
   .sto{font-size:15px;font-weight:900;}.sft{font-size:9px;color:#888;text-align:center;margin-top:6px;}
 }
 
+/* ── MOBILE: max 600px ── */
 @media(max-width:600px){
-  .km{padding:10px;}
-  .qbar{padding:7px 10px;gap:12px;}
-  .qv{font-size:26px;}
-  .topbar{padding:0 10px;height:52px;}
-  .clk{font-size:22px;}
+  .km{padding:8px;}
+  .qbar{padding:7px 10px;gap:10px;}
+  .qv{font-size:24px;}
+  .ql{font-size:8px;}
+  .topbar{padding:0 10px;height:50px;}
+  .clk{font-size:20px;}
+  .alink{font-size:9px;padding:5px 8px;letter-spacing:1px;}
   .macts,.rmacts{flex-direction:column;}
   .ick{width:44px;height:44px;font-size:22px;}
+  /* Stock panel full-width overlay on small phones */
+  #stockPanel{width:min(260px,85vw);}
+  #stockToggleBtn.panel-open{right:min(260px,85vw);}
+  .km-shifted{padding-right:0 !important;}
+}
+
+/* ── LANDSCAPE MOBILE ── */
+@media(max-height:500px) and (orientation:landscape){
+  .topbar{height:44px;}
+  .qbar{padding:5px 12px;gap:8px;}
+  .qv{font-size:22px;}
+  .km{padding:8px 10px;}
+  .mbar{height:34px;}
+  /* Stock panel: compact di landscape */
+  #stockPanel{width:220px;}
+  #stockToggleBtn.panel-open{right:220px;}
+  .km-shifted{padding-right:236px !important;}
 }
 
 /* PWA Install Banner */
@@ -357,7 +377,7 @@ body{font-family:'Montserrat',sans-serif;background:var(--bk);color:var(--tx);mi
 
 /* ── LIGHT MODE ORDER TEXT FIXES ── */
 body.light .oc{background:#ffffff;border-color:rgba(0,0,0,0.12);}
-body.light .on{color:#111111;}
+body.light .oc.on{color:#111111;}
 body.light .ci li{color:#111111;}
 body.light .in{color:#111111;}
 body.light .cnote{color:#333333;background:rgba(0,0,0,0.05);border-color:rgba(0,0,0,0.1);}
@@ -482,27 +502,58 @@ body.light .es{color:#444444;}
 .sp-count{font-size:10px;color:var(--mt);}
 .sp-count b{color:var(--gn);}
 .sp-count b.red{color:var(--red);}
+
+/* ── LANDSCAPE SMALL PHONE ── */
+@media(max-width:600px) and (orientation:landscape){
+  .topbar{padding:0 8px;height:44px;}
+  .alink{font-size:9px;padding:5px 7px;letter-spacing:1px;}
+  .bs{display:none;}
+  .badge{font-size:9px;padding:3px 6px;}
+  .clk{font-size:19px;}
+  .mbar{height:34px;}
+  .qbar{height:auto;padding:5px 10px;gap:8px;}
+  .qv{font-size:20px;}
+}
+
+/* ── BLUETOOTH PRINT BAR ── */
+#bt-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:800;
+  background:var(--g1);border-top:2px solid var(--br);
+  padding:8px 16px;
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  transform:translateY(100%);transition:transform .3s cubic-bezier(.16,1,.3,1);
+}
+#bt-bar.show{transform:translateY(0);}
+.bt-status{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;flex:1;min-width:120px;}
+.bt-dot{width:8px;height:8px;border-radius:50%;background:var(--mt);flex-shrink:0;transition:background .3s;}
+.bt-dot.on{background:var(--gn);box-shadow:0 0 8px rgba(37,211,102,.6);}
+.bt-dot.off{background:rgba(232,25,44,.7);}
+.bt-name{color:var(--mt);font-size:9px;letter-spacing:1px;margin-top:1px;}
+.bt-btn{padding:6px 12px;border-radius:4px;font-family:'Montserrat',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;border:1px solid;transition:all .2s;white-space:nowrap;}
+.bt-btn.connect{background:rgba(59,130,246,.12);color:var(--bl);border-color:rgba(59,130,246,.3);}
+.bt-btn.connect:hover{background:var(--bl);color:#fff;}
+.bt-btn.disconnect{background:rgba(232,25,44,.1);color:var(--red);border-color:rgba(232,25,44,.25);}
+.bt-btn.disconnect:hover{background:var(--red);color:#fff;}
+.bt-paper{padding:5px 9px;border-radius:4px;background:var(--g3);border:1px solid var(--br);color:var(--mt);font-family:'Montserrat',sans-serif;font-size:10px;font-weight:600;cursor:pointer;transition:all .2s;}
+.bt-paper:hover{border-color:var(--or);color:var(--or);}
+.bt-icon-btn{padding:6px 10px;background:rgba(59,130,246,.12);color:var(--bl);border:1px solid rgba(59,130,246,.3);border-radius:4px;font-size:11px;cursor:pointer;transition:all .2s;font-family:'Montserrat',sans-serif;font-weight:700;letter-spacing:1px;white-space:nowrap;}
+.bt-icon-btn:hover{background:var(--bl);color:#fff;}
+.bt-icon-btn.connected{background:rgba(37,211,102,.12);color:var(--gn);border-color:rgba(37,211,102,.3);}
+.bt-icon-btn.connected:hover{background:var(--gn);color:#000;}
 </style>
 
 <script>
-// Auto landscape saat buka aplikasi
+// Orientation lock — hanya berjalan di Android Chrome (iOS tidak support)
 (function(){
-  function lockLandscape(){
+  function tryLock(){
     try{
       if(screen.orientation && screen.orientation.lock){
         screen.orientation.lock('landscape').catch(function(){});
-      } else if(screen.lockOrientation){
-        screen.lockOrientation('landscape');
-      } else if(screen.mozLockOrientation){
-        screen.mozLockOrientation('landscape');
       }
     }catch(e){}
   }
-  // Coba langsung
-  lockLandscape();
-  // Coba lagi setelah interaksi pertama (iOS butuh user gesture)
-  document.addEventListener('touchstart', lockLandscape, {once:true, passive:true});
-  document.addEventListener('click', lockLandscape, {once:true, passive:true});
+  document.addEventListener('touchstart', tryLock, {once:true, passive:true});
+  document.addEventListener('click', tryLock, {once:true, passive:true});
 })();
 </script>
 </head>
@@ -514,8 +565,8 @@ body.light .es{color:#444444;}
 <!-- MODE BAR -->
 <div class="mbar">
   <div class="mlbl">MODE:</div>
-  <button class="mbtn lh on" id="mbLH" onclick="setMode('localhost')">🖥️ Localhost (WiFi)</button>
-  <button class="mbtn fb" id="mbFB" onclick="setMode('firebase')">🔥 Firebase</button>
+  <button class="mbtn lh" id="mbLH" onclick="setMode('localhost')">🖥️ Localhost (WiFi)</button>
+  <button class="mbtn fb on" id="mbFB" onclick="setMode('firebase')">🔥 Firebase</button>
   <button class="mbtn ls" id="mbLS" onclick="setMode('local')">💾 Offline</button>
   <button class="mbtn rst" onclick="openReset()">⚠️ Reset</button>
   <div class="mst ld" id="MST">⏳ Memulai...</div>
@@ -532,6 +583,7 @@ body.light .es{color:#444444;}
     <button class="bell-unlock" id="BELL_BTN" onclick="unlockAudio()" title="Aktifkan suara notifikasi">🔔</button>
     <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="Toggle mode"></button>
     <div class="clk" id="CLK">00:00:00</div>
+    <button class="bt-icon-btn" id="bt-icon-btn" onclick="btToggleBar()">🖨️ BT</button>
     <a href="#" class="alink" id="KASIR_LINK">← Kasir</a>
   </div>
 </div>
@@ -1312,8 +1364,424 @@ document.getElementById('PM').addEventListener('click',function(e){if(e.target==
 document.getElementById('RMODAL').addEventListener('click',function(e){if(e.target===this)closeReset();});
 
 // Auto-detect
-if(window.location.protocol==='file:') setMode('firebase');
-else setMode('localhost');
+
+// ══════════════════════════════════════════
+// BLUETOOTH PRINT SYSTEM
+// ══════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+// BLUETOOTH THERMAL PRINTER — ESC/POS via Web Bluetooth API
+// Support: Chrome Android, Chrome Desktop (with BT)
+// Fallback: window.print() jika Web Bluetooth tidak tersedia
+// ══════════════════════════════════════════════════════════
+var BTP = (function(){
+  'use strict';
+
+  // ── CONFIG ──
+  var _device     = null;  // BluetoothDevice
+  var _server     = null;  // BluetoothRemoteGATTServer
+  var _char       = null;  // BluetoothRemoteGATTCharacteristic
+  var _paperWidth = parseInt(localStorage.getItem('bt_paper')||'58'); // 58 or 80
+  var _autoConnect= localStorage.getItem('bt_auto')==='1';
+
+  // Known Printer Service/Characteristic UUIDs (ESC/POS BLE printers)
+  var SERVICE_UUIDS = [
+    '000018f0-0000-1000-8000-00805f9b34fb', // Generic ESC/POS (most Chinese thermal BT printers)
+    '49535343-fe7d-4ae5-8fa9-9fafd205e455', // Microchip / PrinterShare
+    'e7810a71-73ae-499d-8c15-faa9aef0c3f2', // Xprinter / common
+    '000018f0-0000-1000-8000-00805f9b34fb',
+    '0000ff00-0000-1000-8000-00805f9b34fb',
+  ];
+  var CHAR_UUIDS = [
+    '00002af1-0000-1000-8000-00805f9b34fb',
+    '49535343-8841-43f4-a8d4-ecbe34729bb3',
+    'bef8d6c9-9c21-4c9e-b632-bd58c1009f9f',
+    '0000ff02-0000-1000-8000-00805f9b34fb',
+    '00002af1-0000-1000-8000-00805f9b34fb',
+  ];
+
+  // ── ESC/POS COMMANDS ──
+  var ESC = 0x1B, GS = 0x1D, FS = 0x1C;
+  function cmd(){ return Array.prototype.slice.call(arguments); }
+
+  var ESC_INIT       = cmd(ESC,0x40);
+  var CUT_PAPER      = cmd(GS,0x56,0x42,0x00);
+  var FEED_LINE      = cmd(0x0A);
+  var ALIGN_LEFT     = cmd(ESC,0x61,0x00);
+  var ALIGN_CENTER   = cmd(ESC,0x61,0x01);
+  var ALIGN_RIGHT    = cmd(ESC,0x61,0x02);
+  var BOLD_ON        = cmd(ESC,0x45,0x01);
+  var BOLD_OFF       = cmd(ESC,0x45,0x00);
+  var DOUBLE_HEIGHT  = cmd(ESC,0x21,0x10);
+  var DOUBLE_BOTH    = cmd(ESC,0x21,0x30);
+  var NORMAL_SIZE    = cmd(ESC,0x21,0x00);
+  var SMALL_FONT     = cmd(ESC,0x21,0x01);
+
+  function strToBytes(str){
+    var bytes=[];
+    // Simple ASCII + common chars; full UTF-8 would need more
+    for(var i=0;i<str.length;i++){
+      var code=str.charCodeAt(i);
+      if(code<128) bytes.push(code);
+      else bytes.push(0x3F); // '?' for non-ASCII
+    }
+    return bytes;
+  }
+
+  function line(text){
+    return strToBytes(text).concat(FEED_LINE);
+  }
+
+  function centerLine(text){
+    return ALIGN_CENTER.concat(strToBytes(text)).concat(FEED_LINE).concat(ALIGN_LEFT);
+  }
+
+  function divider(char, count){
+    char = char || '-';
+    count = count || (_paperWidth===80 ? 48 : 32);
+    var s=''; for(var i=0;i<count;i++) s+=char;
+    return line(s);
+  }
+
+  function formatPrice(n){
+    var s = parseInt(n||0).toLocaleString('id-ID');
+    return 'Rp '+s;
+  }
+
+  function padRight(str, len){
+    str = String(str||'');
+    while(str.length < len) str += ' ';
+    return str.slice(0,len);
+  }
+
+  function padLeft(str, len){
+    str = String(str||'');
+    while(str.length < len) str = ' '+str;
+    return str.slice(-len);
+  }
+
+  // ── BUILD ESC/POS BYTES for KASIR struk ──
+  function buildKasirBytes(o){
+    var bytes = [];
+    var W = _paperWidth===80 ? 48 : 32; // chars per line
+
+    bytes = bytes.concat(ESC_INIT);
+    bytes = bytes.concat(ALIGN_CENTER);
+    bytes = bytes.concat(BOLD_ON);
+    bytes = bytes.concat(DOUBLE_BOTH);
+    bytes = bytes.concat(strToBytes('DIPOJOK'));
+    bytes = bytes.concat(NORMAL_SIZE);
+    bytes = bytes.concat(FEED_LINE);
+    bytes = bytes.concat(BOLD_OFF);
+    bytes = bytes.concat(strToBytes('Coffee & Eatery'));
+    bytes = bytes.concat(FEED_LINE);
+    bytes = bytes.concat(ALIGN_LEFT);
+    bytes = bytes.concat(divider('-', W));
+
+    var ts = o.createdAt ? new Date(o.createdAt).toLocaleString('id-ID',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}) : (o.time||'-');
+
+    bytes = bytes.concat(line('Order  : #' + (o.orderNumber||'-')));
+    bytes = bytes.concat(line('Meja   : ' + (o.table||'-')));
+    bytes = bytes.concat(line('Waktu  : ' + ts));
+    if(o.customer && o.customer !== '-' && o.customer !== '—')
+      bytes = bytes.concat(line('Kasir  : ' + o.customer));
+    bytes = bytes.concat(divider('-', W));
+
+    (o.items||[]).forEach(function(i){
+      var nameStr = String(i.name||'').slice(0, W-2);
+      var priceStr = formatPrice((i.price||0)*(i.qty||1));
+      // Line 1: qty x name
+      bytes = bytes.concat(line(String(i.qty||1)+'x ' + nameStr));
+      // Line 2: right-aligned price
+      var spacer = W - 4 - priceStr.length;
+      var priceLine = '    ' + padLeft(priceStr, W-4);
+      bytes = bytes.concat(ALIGN_RIGHT);
+      bytes = bytes.concat(strToBytes(priceStr));
+      bytes = bytes.concat(FEED_LINE);
+      bytes = bytes.concat(ALIGN_LEFT);
+    });
+
+    bytes = bytes.concat(divider('=', W));
+    bytes = bytes.concat(BOLD_ON);
+    var totStr = formatPrice(o.total||o.totalPrice||0);
+    bytes = bytes.concat(ALIGN_RIGHT);
+    bytes = bytes.concat(DOUBLE_HEIGHT);
+    bytes = bytes.concat(strToBytes('TOTAL: '+totStr));
+    bytes = bytes.concat(NORMAL_SIZE);
+    bytes = bytes.concat(BOLD_OFF);
+    bytes = bytes.concat(FEED_LINE);
+    bytes = bytes.concat(ALIGN_LEFT);
+
+    if(o.noted){
+      bytes = bytes.concat(FEED_LINE);
+      bytes = bytes.concat(line('Catatan:'));
+      bytes = bytes.concat(line(String(o.noted).slice(0,W)));
+    }
+
+    bytes = bytes.concat(divider('-', W));
+    bytes = bytes.concat(ALIGN_CENTER);
+    bytes = bytes.concat(line('Terima kasih sudah berkunjung'));
+    bytes = bytes.concat(line('Selamat menikmati :)'));
+    bytes = bytes.concat(ALIGN_LEFT);
+
+    // Feed & cut
+    for(var i=0;i<4;i++) bytes = bytes.concat(FEED_LINE);
+    bytes = bytes.concat(CUT_PAPER);
+    return new Uint8Array(bytes);
+  }
+
+  // ── BUILD ESC/POS BYTES for DAPUR struk ──
+  function buildDapurBytes(o){
+    var bytes = [];
+    var W = _paperWidth===80 ? 48 : 32;
+
+    bytes = bytes.concat(ESC_INIT);
+    bytes = bytes.concat(ALIGN_CENTER);
+    bytes = bytes.concat(BOLD_ON);
+    bytes = bytes.concat(DOUBLE_BOTH);
+    bytes = bytes.concat(strToBytes('DAPUR'));
+    bytes = bytes.concat(NORMAL_SIZE);
+    bytes = bytes.concat(BOLD_OFF);
+    bytes = bytes.concat(FEED_LINE);
+    bytes = bytes.concat(ALIGN_LEFT);
+    bytes = bytes.concat(divider('=', W));
+
+    var ts = o.createdAt ? new Date(o.createdAt).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}) : (o.time||'-');
+    bytes = bytes.concat(BOLD_ON);
+    bytes = bytes.concat(DOUBLE_BOTH);
+    bytes = bytes.concat(ALIGN_CENTER);
+    bytes = bytes.concat(strToBytes('MEJA ' + (o.table||'-')));
+    bytes = bytes.concat(NORMAL_SIZE);
+    bytes = bytes.concat(BOLD_OFF);
+    bytes = bytes.concat(ALIGN_LEFT);
+    bytes = bytes.concat(FEED_LINE);
+    bytes = bytes.concat(line('Order #'+(o.orderNumber||'-') + '  ' + ts));
+    bytes = bytes.concat(divider('-', W));
+
+    (o.items||[]).forEach(function(i){
+      bytes = bytes.concat(BOLD_ON);
+      bytes = bytes.concat(DOUBLE_HEIGHT);
+      bytes = bytes.concat(strToBytes(String(i.qty||1)+'x '));
+      bytes = bytes.concat(NORMAL_SIZE);
+      bytes = bytes.concat(BOLD_OFF);
+      bytes = bytes.concat(strToBytes(String(i.name||'').slice(0,W-4)));
+      bytes = bytes.concat(FEED_LINE);
+    });
+
+    bytes = bytes.concat(divider('-', W));
+    if(o.noted){
+      bytes = bytes.concat(line('>> ' + String(o.noted).slice(0,W-3)));
+      bytes = bytes.concat(FEED_LINE);
+    }
+
+    for(var j=0;j<4;j++) bytes = bytes.concat(FEED_LINE);
+    bytes = bytes.concat(CUT_PAPER);
+    return new Uint8Array(bytes);
+  }
+
+  // ── SEND BYTES to BT printer ──
+  function sendBytes(bytes, cb){
+    if(!_char){ if(cb) cb(new Error('Printer belum terhubung')); return; }
+    // Chunk into 512-byte packets (BLE MTU limit)
+    var chunkSize = 512;
+    var offset = 0;
+    function sendNext(){
+      if(offset >= bytes.length){ if(cb) cb(null); return; }
+      var chunk = bytes.slice(offset, offset+chunkSize);
+      offset += chunkSize;
+      _char.writeValue(chunk).then(function(){
+        setTimeout(sendNext, 20); // small delay between chunks
+      }).catch(function(e){
+        if(cb) cb(e);
+      });
+    }
+    sendNext();
+  }
+
+  // ── CONNECT ──
+  function connect(cb){
+    if(!navigator.bluetooth){
+      if(cb) cb(new Error('Web Bluetooth tidak tersedia di browser ini.\nGunakan Chrome Android atau Chrome Desktop.'));
+      return;
+    }
+    // Build filter options — try to find printer by name or service
+    var opts = {
+      acceptAllDevices: true,
+      optionalServices: SERVICE_UUIDS
+    };
+    navigator.bluetooth.requestDevice(opts)
+      .then(function(device){
+        _device = device;
+        _device.addEventListener('gattserverdisconnected', function(){
+          _char = null; _server = null;
+          showBTPrint('🔴 Printer terputus');
+        });
+        return device.gatt.connect();
+      })
+      .then(function(server){
+        _server = server;
+        // Try each service UUID until one works
+        return tryServices(server, 0);
+      })
+      .then(function(characteristic){
+        _char = characteristic;
+        if(_autoConnect && _device) localStorage.setItem('bt_device_name', _device.name||'');
+        showBTPrint('✅ '+(_device&&_device.name||'Printer')+' terhubung!');
+        if(cb) cb(null);
+      })
+      .catch(function(e){
+        _char = null;
+        if(e.message && e.message.indexOf('cancelled')!==-1){
+          if(cb) cb(new Error('Dibatalkan'));
+        } else {
+          if(cb) cb(e);
+        }
+      });
+  }
+
+  function tryServices(server, idx){
+    if(idx >= SERVICE_UUIDS.length) return Promise.reject(new Error('Service tidak ditemukan di printer ini'));
+    return server.getPrimaryService(SERVICE_UUIDS[idx])
+      .then(function(service){
+        return tryCharacteristics(service, 0);
+      })
+      .catch(function(){
+        return tryServices(server, idx+1);
+      });
+  }
+
+  function tryCharacteristics(service, idx){
+    if(idx >= CHAR_UUIDS.length){
+      // Try getting all characteristics
+      return service.getCharacteristics().then(function(chars){
+        // Find one that supports write
+        var writable = chars.filter(function(c){
+          return c.properties.write || c.properties.writeWithoutResponse;
+        });
+        if(!writable.length) return Promise.reject(new Error('Tidak ada karakteristik write'));
+        return Promise.resolve(writable[0]);
+      });
+    }
+    return service.getCharacteristic(CHAR_UUIDS[idx])
+      .catch(function(){
+        return tryCharacteristics(service, idx+1);
+      });
+  }
+
+  function disconnect(){
+    if(_server && _server.connected) _server.disconnect();
+    _device = null; _server = null; _char = null;
+  }
+
+  function isConnected(){ return !!_char; }
+  function getDeviceName(){ return _device && _device.name || ''; }
+  function setPaperWidth(w){ _paperWidth=w; localStorage.setItem('bt_paper',w); }
+  function getPaperWidth(){ return _paperWidth; }
+
+  // ── HIGH-LEVEL PRINT ──
+  function printKasir(o, cb){
+    if(!isConnected()){ if(cb) cb(new Error('not_connected')); return; }
+    var bytes = buildKasirBytes(o);
+    sendBytes(bytes, cb);
+  }
+
+  function printDapur(o, cb){
+    if(!isConnected()){ if(cb) cb(new Error('not_connected')); return; }
+    var bytes = buildDapurBytes(o);
+    sendBytes(bytes, cb);
+  }
+
+  // ── UI helper (toast-like) ──
+  function showBTPrint(msg){
+    try{
+      var fn = window.notif || window.flash;
+      if(fn) fn(msg, msg.includes('✅')||msg.includes('terh') ? 'gn' : 'or');
+    }catch(e){}
+    console.log('[BTPrint]', msg);
+  }
+
+  return {
+    connect:connect,
+    disconnect:disconnect,
+    isConnected:isConnected,
+    getDeviceName:getDeviceName,
+    printKasir:printKasir,
+    printDapur:printDapur,
+    setPaperWidth:setPaperWidth,
+    getPaperWidth:getPaperWidth,
+    buildKasirBytes:buildKasirBytes,
+    buildDapurBytes:buildDapurBytes,
+    sendBytes:sendBytes,
+    isAvailable: function(){ return !!navigator.bluetooth; }
+  };
+})();
+
+
+// Kitchen BT UI
+function btUpdateUI(){
+  var dot = document.getElementById('bt-dot');
+  var name = document.getElementById('bt-name');
+  var statusTxt = document.getElementById('bt-status-txt');
+  var iconBtn = document.getElementById('bt-icon-btn');
+  var connected = BTP.isConnected();
+  if(dot) dot.className='bt-dot '+(connected?'on':'off');
+  if(statusTxt) statusTxt.textContent = connected ? 'Terhubung' : 'Tidak Terhubung';
+  if(name) name.textContent = connected ? BTP.getDeviceName() : (BTP.isAvailable() ? 'Klik Connect' : 'Web Bluetooth tidak tersedia');
+  if(iconBtn){
+    iconBtn.className='bt-icon-btn'+(connected?' connected':'');
+    iconBtn.innerHTML = connected ? '🖨️ BT ✓' : '🖨️ BT';
+  }
+  var pbtn = document.getElementById('bt-paper-btn');
+  if(pbtn) pbtn.textContent = BTP.getPaperWidth()+'mm';
+}
+
+function btConnect(){
+  flash('🔵 Mencari printer Bluetooth...','or');
+  BTP.connect(function(err){
+    if(err){
+      if(err.message!=='Dibatalkan') flash('❌ '+err.message,'rd');
+    } else {
+      flash('✅ Printer terhubung!','gn');
+    }
+    btUpdateUI();
+  });
+}
+
+function btDisconnect(){
+  BTP.disconnect();
+  btUpdateUI();
+  flash('🔌 Printer diputus','or');
+}
+
+function btTogglePaper(){
+  var w = BTP.getPaperWidth()===58 ? 80 : 58;
+  BTP.setPaperWidth(w);
+  btUpdateUI();
+  flash('📄 Lebar kertas: '+w+'mm','gn');
+}
+
+function btToggleBar(){
+  var bar = document.getElementById('bt-bar');
+  if(bar) bar.classList.toggle('show');
+}
+
+// Override doPrintK to try BT first
+var _origDoPrintK = doPrintK;
+function doPrintK(){
+  if(BTP.isConnected() && curPO){
+    flash('🔵 Mencetak via BT...','or');
+    BTP.printDapur(curPO, function(err){
+      if(err){ flash('❌ BT gagal, coba lagi','rd'); }
+      else { flash('✅ Struk tercetak!','gn'); closePM(); }
+    });
+  } else {
+    _origDoPrintK();
+  }
+}
+
+setTimeout(btUpdateUI, 500);
+
+// Default: Firebase
+setMode('firebase');
 </script>
 
 <script>
@@ -1579,5 +2047,19 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 
+
+<!-- ── BLUETOOTH PRINTER BAR ── -->
+<div id="bt-bar">
+  <div class="bt-status">
+    <div class="bt-dot off" id="bt-dot"></div>
+    <div>
+      <div id="bt-status-txt">Tidak Terhubung</div>
+      <div class="bt-name" id="bt-name">Klik Connect untuk sambungkan printer</div>
+    </div>
+  </div>
+  <button class="bt-paper" id="bt-paper-btn" onclick="btTogglePaper()">58mm</button>
+  <button class="bt-btn connect" onclick="btConnect()">🔗 Connect</button>
+  <button class="bt-btn disconnect" onclick="btDisconnect()">✕</button>
+</div>
 </body>
 </html>

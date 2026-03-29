@@ -697,7 +697,7 @@
   const firebaseConfig = {
     apiKey: "AIzaSyAMcPOtg55KJkw-eL-RumpyZMPsxThPxZk",
     authDomain: "dipojok-a784e.firebaseapp.com",
-    databaseURL: "https://dipojok-a784e-default-rtdb.asia-southeast1.firebasedatabase.app",
+    databaseURL: "https://kasirdankitchenpojok-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "dipojok-a784e",
     storageBucket: "dipojok-a784e.firebasestorage.app",
     messagingSenderId: "37793000903",
@@ -1716,18 +1716,9 @@
     const tp=cart.reduce((s,i)=>s+(i.numPrice*i.qty),0);
     const noted=document.getElementById('notedInput')?document.getElementById('notedInput').value.trim():'';
 
-    if(window._firebaseReady && window._firebaseDb) {
-      const counterRef = window._firebaseRef(window._firebaseDb, 'orderCounter');
-      window._firebaseOnValue(counterRef, (snap) => {
-        const orderNumber = (snap.val()||0) + 1;
-        window._firebaseSet(counterRef, orderNumber);
-        _doActualSendWithBukti(name, table, pay, pStatus, tp, noted, orderNumber, buktiImg);
-      }, {onlyOnce:true});
-    } else {
-      const orderNumber = (parseInt(localStorage.getItem('dipojok_orderCounter')||'0'))+1;
-      localStorage.setItem('dipojok_orderCounter', orderNumber);
-      _doActualSendWithBukti(name, table, pay, pStatus, tp, noted, orderNumber, buktiImg);
-    }
+    // Order number berbasis timestamp (tidak blocking Firebase)
+    const orderNumber = parseInt(Date.now().toString().slice(-4));
+    _doActualSendWithBukti(name, table, pay, pStatus, tp, noted, orderNumber, buktiImg);
   }
 
   function _doActualSendWithBukti(name, table, pay, pStatus, tp, noted, orderNumber, buktiImg) {
@@ -1745,18 +1736,27 @@
     };
 
     if(window._firebaseReady && window._firebaseDb) {
-      // Simpan order
       const dbRef = window._firebaseRef(window._firebaseDb, 'orders/'+orderId);
-      window._firebaseSet(dbRef, order).then(()=>{
-        console.log('✅ Order sent:', orderId);
-        // Simpan bukti di node terpisah
-        if(buktiImg) {
-          const buktiRef = window._firebaseRef(window._firebaseDb, 'bukti/'+orderId);
-          window._firebaseSet(buktiRef, {img: buktiImg})
-            .then(()=>console.log('✅ Bukti saved! Size:', Math.round(buktiImg.length/1024)+'KB'))
-            .catch(e=>console.error('Bukti error:',e));
-        }
-      }).catch(e=>console.error('Order error:',e));
+      window._firebaseSet(dbRef, order)
+        .then(()=>{
+          console.log('✅ QRIS Order sent:', orderId);
+          if(buktiImg) {
+            const buktiRef = window._firebaseRef(window._firebaseDb, 'bukti/'+orderId);
+            window._firebaseSet(buktiRef, {img: buktiImg})
+              .then(()=>console.log('✅ Bukti saved! Size:', Math.round(buktiImg.length/1024)+'KB'))
+              .catch(e=>console.error('Bukti error:',e));
+          }
+        })
+        .catch(e=>{
+          console.error('QRIS Order error:',e);
+          const ex=JSON.parse(localStorage.getItem('dipojok_orders')||'[]');
+          ex.unshift(order); localStorage.setItem('dipojok_orders',JSON.stringify(ex));
+        });
+    } else {
+      // Fallback localStorage
+      const ex=JSON.parse(localStorage.getItem('dipojok_orders')||'[]');
+      ex.unshift(order); localStorage.setItem('dipojok_orders',JSON.stringify(ex));
+      console.warn('Firebase not ready (QRIS), saved locally');
     }
 
     // Cleanup
@@ -1768,10 +1768,9 @@
     selectedPayment='';
     document.querySelectorAll('.pay-btn').forEach(b=>b.classList.remove('selected'));
     document.getElementById('payError').style.display='none';
-    cart=[];
-    updateCartBar();
+    buktiBayarBase64=null;
+    cart=[]; updateCartBar();
     showToast('✅ Pesanan dikirim! Bukti QRIS terkirim ke kasir 🎉');
-    // Track order status
     if(typeof trackOrder==='function') trackOrder(orderId, orderNumber, table);
   }
 
@@ -1781,20 +1780,8 @@
 
     // Hitung nomor urut berdasarkan counter di Firebase
     let orderNumber = 1;
-    if (window._firebaseReady && window._firebaseDb) {
-      const counterRef = window._firebaseRef(window._firebaseDb, 'orderCounter');
-      window._firebaseOnValue(counterRef, (snap) => {
-        orderNumber = (snap.val() || 0) + 1;
-        // Update counter
-        window._firebaseSet(counterRef, orderNumber);
-        // Send order with number
-        _doActualSend(name, table, pay, pStatus, tp, noted, orderNumber);
-      }, { onlyOnce: true });
-      return;
-    }
-    // Fallback localStorage counter
-    orderNumber = (parseInt(localStorage.getItem('dipojok_orderCounter')||'0')) + 1;
-    localStorage.setItem('dipojok_orderCounter', orderNumber);
+    // Gunakan timestamp-based number (sederhana, tidak blocking)
+    orderNumber = parseInt(Date.now().toString().slice(-4));
     _doActualSend(name, table, pay, pStatus, tp, noted, orderNumber);
   }
 
@@ -1818,50 +1805,55 @@
       timestamp: Date.now()
     };
 
-    // Kirim ke Firebase - pisah bukti dari order utama
+    // Kirim ke Firebase
     function sendToFirebase(o) {
       if(window._firebaseReady && window._firebaseDb) {
         try {
-          // Simpan bukti bayar terpisah di node bukti/orderId
           const bukti = o.buktiBayar;
-          const orderWithoutBukti = {...o, buktiBayar: bukti ? true : false};
-
-          // Simpan order utama (tanpa base64)
+          const orderData = {...o, buktiBayar: bukti ? true : false};
           const dbRef = window._firebaseRef(window._firebaseDb, 'orders/' + o.id);
-          window._firebaseSet(dbRef, orderWithoutBukti)
+          window._firebaseSet(dbRef, orderData)
             .then(() => {
-              console.log('✅ Order sent:', o.id);
-              // Simpan bukti di node terpisah jika ada
+              console.log('✅ Order sent to Firebase:', o.id);
               if(bukti) {
                 const buktiRef = window._firebaseRef(window._firebaseDb, 'bukti/' + o.id);
-                window._firebaseSet(buktiRef, { img: bukti })
-                  .then(() => console.log('✅ Bukti saved'))
-                  .catch(err => console.error('Bukti save error:', err));
+                window._firebaseSet(buktiRef, {img: bukti}).catch(err => console.error('Bukti error:', err));
               }
             })
-            .catch(err => console.error('Firebase error:', err));
+            .catch(err => {
+              console.error('Firebase error:', err);
+              // Fallback ke localStorage jika Firebase gagal
+              _saveToLocalStorage(o);
+              showToast('⚠️ Offline mode — pesanan tersimpan lokal');
+            });
         } catch(e) {
           console.error('Firebase send error:', e);
+          _saveToLocalStorage(o);
         }
       } else {
-        // Fallback localStorage
-        const ex=JSON.parse(localStorage.getItem('dipojok_orders')||'[]');
-        ex.unshift(o); localStorage.setItem('dipojok_orders',JSON.stringify(ex));
-        localStorage.setItem('dipojok_new_order',JSON.stringify(o));
+        // Firebase belum siap — simpan lokal
+        _saveToLocalStorage(o);
+        console.warn('Firebase not ready, saved locally');
       }
+    }
+    function _saveToLocalStorage(o){
+      const ex=JSON.parse(localStorage.getItem('dipojok_orders')||'[]');
+      ex.unshift(o); localStorage.setItem('dipojok_orders',JSON.stringify(ex));
     }
     sendToFirebase(order);
 
+    // Reset form
     document.getElementById('tableModal').classList.remove('open');
     document.getElementById('qrisOverlay').classList.remove('open');
     document.getElementById('nameInput').value='';
     document.getElementById('tableInput').value='';
     if(document.getElementById('notedInput'))document.getElementById('notedInput').value='';
-    selectedPayment=''; document.querySelectorAll('.pay-btn').forEach(b=>b.classList.remove('selected'));
+    selectedPayment='';
+    document.querySelectorAll('.pay-btn').forEach(b=>b.classList.remove('selected'));
     document.getElementById('payError').style.display='none';
+    buktiBayarBase64=null; // reset bukti after send
     clearCart();
     showToast(pStatus==='Lunas'?'✅ Pesanan dikirim! Bukti QRIS terkirim ke kasir 🎉':'✅ Pesanan dikirim! Silakan bayar tunai di kasir 💵');
-    // Track order status
     if(typeof trackOrder==='function') trackOrder(orderId, orderNumber, table);
   }
 
@@ -1989,16 +1981,7 @@
     }).join('');
   }
 
-  // Hook into send functions to track orders
-  var _origDoActualSend = _doActualSend;
-  function _doActualSend(name, table, pay, pStatus, tp, noted, orderNumber){
-    _origDoActualSend.apply(this, arguments);
-    // Track after send
-    setTimeout(function(){
-      var orderId = 'ORD-' + Date.now(); // approximate — actual comes from Firebase
-      // We'll track by orderNumber since id is hard to get post-send
-    }, 100);
-  }
+  // trackOrder dipanggil langsung di _doActualSend dan _doActualSendWithBukti
 </script>
 </body>
 </html>
