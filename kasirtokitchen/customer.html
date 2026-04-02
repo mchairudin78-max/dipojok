@@ -1587,6 +1587,28 @@
   // ── CART ──
   let cart=[], selectedPayment='', buktiBayarBase64=null, pendingItem=null, pendingToast=null;
 
+  // ── Daftar item bar (minuman + additional bar) — sama dengan kitchen.html ──
+  // Suffix (Dingin)/(Panas)/(Hangat) diabaikan saat pengecekan
+  var BAR_ITEMS_CUST = [
+    'Americano','On The Rocks','Cafe Latte','Boen Boen','Split','Affogato',
+    'Caramel','Salted Caramel','Shortbread','Roasted Almond','Cotton Brulee',
+    'Cotton Candy','Creme Brulee',
+    'Butterscotch','Popcorn','Walnut Brownie','Cheesecake','Aren','Banana','Vanilla',
+    'Wild Berries','Tropical Guava','Roseberry Coffee','Green Apple Coffee',
+    'Street Sweetness','Street Sweetn','Chilled Guava','Chilledguava',
+    'Matcha','Red Velvet','Chocolate','Cookies and Cream','Cookies And Cream',
+    'Coconut Candy Cream Cheese',
+    'Ice Cream','Air Mineral','Espresso Arabica','Espresso Robusta','Sirup All Varian'
+  ];
+  function isBarItemCust(name){
+    // Hapus suffix seperti (Dingin), (Panas), (Hangat) dll
+    var clean = (name||'').replace(/\s*\([^)]*\)\s*$/, '').trim();
+    return BAR_ITEMS_CUST.some(function(b){
+      return b.toLowerCase() === clean.toLowerCase() ||
+             b.toLowerCase() === (name||'').toLowerCase();
+    });
+  }
+
   function parseP(s){return parsePrice(s);}
 
   function showHotIce(name,price,btn){ pendingItem={name,price,btn}; document.getElementById('hoticeItemName').textContent=name; document.getElementById('hoticeOverlay').classList.add('open'); }
@@ -1599,8 +1621,9 @@
 
   function addToCart(name,price,btnEl){
     const np=parsePrice(price);
+    const isBar=isBarItemCust(name);
     const ex=cart.find(i=>i.name===name);
-    if(ex){ex.qty++;}else{cart.push({name,price,numPrice:np,qty:1});}
+    if(ex){ex.qty++;}else{cart.push({name,price,numPrice:np,qty:1,isBar:isBar});}
     updateCartBar();
     const btn=btnEl||(typeof event!=='undefined'?event.currentTarget:null);
     if(btn){btn.textContent='✓';btn.style.background='var(--red)';setTimeout(()=>{btn.textContent='+';btn.style.background='';},1200);}
