@@ -811,7 +811,7 @@ function togItem(orderKey, idx){
   if(!order) return;
   var item = (order.items||[])[idx];
   // Block toggle if already served, delivered, or a bar item
-  if(item && (item.done || item.delivered || isBarItem(item.name))) return;
+  if(item && (item.done || item.delivered || isBarItem(item.name,item))) return;
 
   if(!itemChecks[orderKey]) itemChecks[orderKey]={};
   itemChecks[orderKey][idx] = !itemChecks[orderKey][idx];
@@ -831,7 +831,7 @@ function getCheckedCount(orderKey, items){
   var checks = itemChecks[orderKey]||{};
   var count = 0;
   (items||[]).forEach(function(item,i){
-    if(isBarItem(item.name)) return; // skip minuman
+    if(isBarItem(item.name,item)) return; // skip minuman
     if(item.done || checks[i]) count++;
   });
   return count;
@@ -842,7 +842,7 @@ function getNewlyChecked(orderKey, items){
   var checks = itemChecks[orderKey]||{};
   var count = 0;
   (items||[]).forEach(function(item,i){
-    if(isBarItem(item.name)) return; // skip minuman
+    if(isBarItem(item.name,item)) return; // skip minuman
     if(!item.done && checks[i]) count++;
   });
   return count;
@@ -854,7 +854,7 @@ function updateProgressBar(orderKey){
   var order = orders.find(function(o){return o._key===orderKey;});
   if(!order) return;
   var items = order.items||[];
-  var foodItems = items.filter(function(it){return !isBarItem(it.name);});
+  var foodItems = items.filter(function(it){return !isBarItem(it.name,it);});
   var total = foodItems.length;
   var checked = getCheckedCount(orderKey, items);
   var fill = card.querySelector('.progress-fill');
@@ -867,7 +867,7 @@ function updateCardFooter(orderKey){
   var order = orders.find(function(o){return o._key===orderKey;});
   if(!order) return;
   var items = order.items||[];
-  var foodItems = items.filter(function(it){return !isBarItem(it.name);});
+  var foodItems = items.filter(function(it){return !isBarItem(it.name,it);});
   var total = foodItems.length;
   var newlyChecked = getNewlyChecked(orderKey, items);
   var totalChecked = getCheckedCount(orderKey, items);
@@ -913,12 +913,12 @@ function sajikanChecked(orderKey){
   // Merge: already served + newly checked (keep delivered flag intact)
   var newItems = items.map(function(item,i){
     if(item.delivered) return Object.assign({},item);
-    if(isBarItem(item.name)) return Object.assign({},item); // minuman tidak disentuh dapur
+    if(isBarItem(item.name,item)) return Object.assign({},item); // minuman tidak disentuh dapur
     return Object.assign({},item, {done: item.done || (!item.done && !!checks[i])});
   });
 
   // allDone: semua MAKANAN (bukan minuman) sudah selesai
-  var foodItems = items.filter(function(it){return !isBarItem(it.name);});
+  var foodItems = items.filter(function(it){return !isBarItem(it.name,it);});
   var foodDone = foodItems.every(function(it,i){
     var idx = items.indexOf(it);
     return newItems[idx].done || newItems[idx].delivered;
@@ -932,7 +932,7 @@ function sajikanChecked(orderKey){
     patch.doneAt = Date.now();
   } else {
     patch.kitchenStatus = 'cooking';
-    patch.partialCount = newItems.filter(function(it){return !isBarItem(it.name)&&(it.done||it.delivered);}).length;
+    patch.partialCount = newItems.filter(function(it){return !isBarItem(it.name,it)&&(it.done||it.delivered);}).length;
   }
 
   itemChecks[orderKey] = {};
@@ -953,7 +953,7 @@ function sajikanSemua(orderKey){
   var items = order.items||[];
   if(!itemChecks[orderKey]) itemChecks[orderKey]={};
   // Only check items that haven't been served, delivered, or are bar items
-  items.forEach(function(item,i){ if(!item.done && !item.delivered && !isBarItem(item.name)) itemChecks[orderKey][i]=true; });
+  items.forEach(function(item,i){ if(!item.done && !item.delivered && !isBarItem(item.name,item)) itemChecks[orderKey][i]=true; });
   sajikanChecked(orderKey);
 }
 
@@ -1040,7 +1040,7 @@ function buildCard(o){
 
   var checks = itemChecks[k]||{};
   var items = o.items||[];
-  var foodItems = items.filter(function(it){return !isBarItem(it.name);});
+  var foodItems = items.filter(function(it){return !isBarItem(it.name,it);});
   // Count items: hanya makanan (bukan minuman bar)
   var alreadyServedCount = foodItems.filter(function(it){return it.done;}).length;
   var newlyCheckedCount = getNewlyChecked(k, items);
@@ -1052,7 +1052,7 @@ function buildCard(o){
     // item.delivered = already sent to table via partial delivery from kasir
     var alreadyDelivered = !!item.delivered;
     // BAR item — minuman, otomatis selesai oleh bar
-    var barItem = isBarItem(item.name);
+    var barItem = isBarItem(item.name,item);
     // checks[i] = newly checked in current session (not yet sent)
     var newlyChecked = ic && !alreadyServed && !alreadyDelivered && !barItem && !!checks[i];
     var itemDone = alreadyServed || newlyChecked || barItem;
@@ -1264,7 +1264,31 @@ function buildKS(tab){
   document.getElementById('KPV').innerHTML=h;
 }
 
-function doPrintK(){ var c=document.getElementById('KPV').innerHTML; var pa=document.getElementById('PA'); pa.innerHTML=c; pa.style.display='block'; window.print(); setTimeout(function(){pa.style.display='none';pa.innerHTML='';},900); }
+function doPrintK(){
+  if(BTP && BTP.isConnected() && curPO){
+    flash('🔵 Mencetak via BT...','or');
+    BTP.printDapur(curPO, function(err){
+      if(err){
+        flash('❌ BT gagal — fallback ke print dialog','rd');
+        // Fallback ke window.print
+        var c=document.getElementById('KPV').innerHTML;
+        var pa=document.getElementById('PA');
+        pa.innerHTML=c; pa.style.display='block';
+        window.print();
+        setTimeout(function(){pa.style.display='none';pa.innerHTML='';},900);
+      } else {
+        flash('✅ Struk tercetak!','gn');
+        closePM();
+      }
+    });
+  } else {
+    var c=document.getElementById('KPV').innerHTML;
+    var pa=document.getElementById('PA');
+    pa.innerHTML=c; pa.style.display='block';
+    window.print();
+    setTimeout(function(){pa.style.display='none';pa.innerHTML='';},900);
+  }
+}
 
 // ══════════════════════════════════════════
 // SOUND & FLASH
@@ -1588,10 +1612,21 @@ var BTP = (function(){
       if(offset >= bytes.length){ if(cb) cb(null); return; }
       var chunk = bytes.slice(offset, offset+chunkSize);
       offset += chunkSize;
-      _char.writeValue(chunk).then(function(){
-        setTimeout(sendNext, 20); // small delay between chunks
+      // Try writeValue first, fallback to writeValueWithoutResponse (some printers)
+      var writePromise = (_char.properties && _char.properties.writeWithoutResponse && !_char.properties.write)
+        ? _char.writeValueWithoutResponse(chunk)
+        : _char.writeValue(chunk);
+      writePromise.then(function(){
+        setTimeout(sendNext, 30); // small delay between chunks
       }).catch(function(e){
-        if(cb) cb(e);
+        // Retry with writeValueWithoutResponse if writeValue failed
+        if(_char.writeValueWithoutResponse && e.message && e.message.indexOf('GATT')!==-1){
+          _char.writeValueWithoutResponse(chunk).then(function(){
+            setTimeout(sendNext, 30);
+          }).catch(function(e2){ if(cb) cb(e2); });
+        } else {
+          if(cb) cb(e);
+        }
       });
     }
     sendNext();
@@ -1765,18 +1800,8 @@ function btToggleBar(){
 }
 
 // Override doPrintK to try BT first
-var _origDoPrintK = doPrintK;
-function doPrintK(){
-  if(BTP.isConnected() && curPO){
-    flash('🔵 Mencetak via BT...','or');
-    BTP.printDapur(curPO, function(err){
-      if(err){ flash('❌ BT gagal, coba lagi','rd'); }
-      else { flash('✅ Struk tercetak!','gn'); closePM(); }
-    });
-  } else {
-    _origDoPrintK();
-  }
-}
+// doPrintK: BT jika connect, fallback window.print
+// (Tidak pakai override pattern karena function hoisting menyebabkan infinite loop)
 
 setTimeout(btUpdateUI, 500);
 
@@ -1801,8 +1826,15 @@ var BAR_ITEMS = [
   // Additional — tidak perlu dapur
   'Ice Cream','Air Mineral','Espresso Arabica','Espresso Robusta','Sirup All Varian'
 ];
-function isBarItem(name){
-  return BAR_ITEMS.some(function(b){ return b.toLowerCase()===name.toLowerCase(); });
+function isBarItem(name, item){
+  // Jika item object punya flag isBar (dari customer.html), langsung pakai
+  if(item && item.isBar===true) return true;
+  // Normalisasi: hapus suffix seperti (Dingin), (Panas), (Hangat), (Hot), (Iced), (Panas/Dingin) dll
+  var clean=(name||'').replace(/\s*\([^)]*\)\s*$/, '').trim();
+  return BAR_ITEMS.some(function(b){
+    return b.toLowerCase()===clean.toLowerCase() ||
+           b.toLowerCase()===(name||'').toLowerCase();
+  });
 }
 
 var STOCK_MENU = {
@@ -1826,24 +1858,75 @@ var STOCK_MENU = {
   ]}
 };
 
-function getStock(){
+// Stock: pakai Firebase jika tersedia, fallback localStorage
+var _stockCache = null; // cache lokal agar UI responsif
+
+function getStockLocal(){
   try{ return JSON.parse(localStorage.getItem(MENU_STOCK_KEY)||'{}'); }
   catch(e){ return {}; }
 }
-function saveStock(s){
+function saveStockLocal(s){
   try{
     localStorage.setItem(MENU_STOCK_KEY, JSON.stringify(s));
     localStorage.setItem(MENU_STOCK_KEY+'_ts', Date.now());
   }catch(e){}
 }
 
+// Baca stock dari Firebase
+function loadStockFromFirebase(cb){
+  if(curMode!=='firebase'){ if(cb) cb(getStockLocal()); return; }
+  fbGet('/menu_stock', function(err, data){
+    if(err||!data){ if(cb) cb(getStockLocal()); return; }
+    // Sync ke localStorage juga
+    saveStockLocal(data);
+    _stockCache = data;
+    if(cb) cb(data);
+  });
+}
+
+// Subscribe realtime changes dari Firebase
+function subscribeStock(){
+  if(curMode!=='firebase') return;
+  // Poll setiap 3 detik untuk sync multi-device
+  setInterval(function(){
+    fbGet('/menu_stock', function(err, data){
+      if(err||!data) return;
+      var prevStr = JSON.stringify(_stockCache||{});
+      var newStr  = JSON.stringify(data);
+      if(prevStr !== newStr){
+        _stockCache = data;
+        saveStockLocal(data);
+        renderStockPanel();
+      }
+    });
+  }, 3000);
+}
+
+function getStock(){
+  return _stockCache || getStockLocal();
+}
+
+function saveStock(s){
+  _stockCache = s;
+  saveStockLocal(s);
+  // Sync ke Firebase
+  if(curMode==='firebase'){
+    fbPatch('/menu_stock', s, function(err){
+      if(err) console.warn('Stock save error:', err);
+    });
+  }
+}
+
 function toggleStock(name){
-  var s = getStock();
+  var s = Object.assign({}, getStock());
   var cur = s[name] !== false;
   s[name] = !cur;
-  saveStock(s);
+  // Optimistic UI
+  _stockCache = s;
   renderStockPanel();
   flash((s[name] ? '✅ ' : '❌ ') + name + (s[name] ? ' — READY' : ' — NOT READY'), s[name] ? 'gn' : 'rd');
+  // Save (Firebase + localStorage)
+  saveStock(s);
 }
 
 function renderStockPanel(){
@@ -1897,11 +1980,20 @@ function toggleStockPanel(){
   } else {
     km.classList.add('km-shifted');
   }
+  // Render lokal dulu, lalu fetch Firebase
   renderStockPanel();
+  setTimeout(function(){
+    loadStockFromFirebase(function(s){
+      _stockCache = s;
+      renderStockPanel();
+    });
+    subscribeStock();
+  }, 1500);
 })();
 
 window.addEventListener('storage', function(e){
   if(e.key === MENU_STOCK_KEY || e.key === MENU_STOCK_KEY + '_ts'){
+    _stockCache = null; // force re-read from localStorage
     renderStockPanel();
   }
 });

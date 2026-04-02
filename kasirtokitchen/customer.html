@@ -451,28 +451,66 @@
   .toast.show { transform:translateX(0); }
 
   /* ── ORDER STATUS TRACKER ── */
-  #orderTracker {
-    position:fixed; bottom:0; left:0; right:0; z-index:600;
-    background:var(--black); border-top:2px solid var(--red);
-    padding:0; max-height:0; overflow:hidden;
-    transition:max-height .45s cubic-bezier(.16,1,.3,1), padding .45s;
+  /* ── ORDER TRACKER — topbar dropdown ── */
+  .nav-tracker-btn {
+    position:relative;
+    display:flex; align-items:center; gap:6px;
+    background:rgba(255,255,255,.06); color:rgba(255,255,255,.7);
+    border:1px solid rgba(255,255,255,.12);
+    padding:7px 13px; border-radius:2px;
+    font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase;
+    cursor:pointer; transition:all .2s; white-space:nowrap;
+    font-family:'Montserrat',sans-serif;
   }
-  #orderTracker.show { max-height:280px; padding:14px 20px 18px; }
-  .ot-title { font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px; }
-  .ot-list { display:flex; flex-direction:column; gap:8px; max-height:200px; overflow-y:auto; }
-  .ot-item { background:#111; border-radius:6px; padding:10px 14px; border-left:3px solid; display:flex; align-items:center; gap:10px; }
+  .nav-tracker-btn:hover { background:rgba(255,255,255,.12); color:#fff; border-color:rgba(255,255,255,.25); }
+  .nav-tracker-btn.has-orders { border-color:rgba(232,25,44,.45); color:#fff; background:rgba(232,25,44,.1); }
+  .nav-tracker-badge {
+    display:none;
+    background:var(--red); color:#fff;
+    font-size:9px; font-weight:700;
+    min-width:16px; height:16px; padding:0 4px;
+    border-radius:8px; align-items:center; justify-content:center;
+    line-height:1;
+  }
+  .nav-tracker-badge.show { display:flex; }
+
+  #orderTracker {
+    position:fixed; top:62px; right:16px; z-index:599;
+    width:min(360px, calc(100vw - 32px));
+    background:rgba(10,10,10,0.98); border:1px solid rgba(232,25,44,.25);
+    border-radius:8px; box-shadow:0 8px 32px rgba(0,0,0,.7);
+    padding:0; max-height:0; overflow:hidden;
+    transition:max-height .38s cubic-bezier(.16,1,.3,1), padding .38s, opacity .25s;
+    backdrop-filter:blur(16px);
+    opacity:0; pointer-events:none;
+  }
+  #orderTracker.show {
+    max-height:400px; padding:14px 14px 14px;
+    opacity:1; pointer-events:all;
+  }
+  .ot-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .ot-title { font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,.4); }
+  .ot-header-btns { display:flex; gap:6px; align-items:center; }
+  .ot-clear-btn { background:transparent; border:1px solid rgba(255,255,255,.12); color:rgba(255,255,255,.35); font-size:9px; font-weight:600; letter-spacing:1px; padding:3px 8px; border-radius:3px; cursor:pointer; text-transform:uppercase; transition:all .2s; }
+  .ot-clear-btn:hover { border-color:rgba(232,25,44,.4); color:var(--red); }
+  .ot-close-btn { background:transparent; border:none; color:rgba(255,255,255,.3); font-size:18px; cursor:pointer; padding:2px 4px; line-height:1; }
+  .ot-close-btn:hover { color:#fff; }
+  .ot-list { display:flex; flex-direction:column; gap:6px; max-height:300px; overflow-y:auto; }
+  .ot-list::-webkit-scrollbar { width:3px; }
+  .ot-list::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1); }
+  .ot-item { background:#141414; border-radius:6px; padding:9px 12px; border-left:3px solid; display:flex; align-items:center; gap:10px; position:relative; }
   .ot-item.waiting { border-color:rgba(255,140,0,.6); }
-  .ot-item.processing { border-color:var(--red); }
-  .ot-item.done { border-color:#25D366; }
-  .ot-icon { font-size:20px; flex-shrink:0; }
-  .ot-info { flex:1; }
-  .ot-order { font-family:'Bebas Neue',sans-serif; font-size:15px; letter-spacing:1px; color:#fff; }
-  .ot-status { font-size:11px; color:var(--text-muted); margin-top:1px; }
+  .ot-item.done { border-color:#25D366; opacity:.8; }
+  .ot-item.rejected { border-color:rgba(232,25,44,.5); opacity:.7; }
+  .ot-icon { font-size:18px; flex-shrink:0; }
+  .ot-info { flex:1; min-width:0; }
+  .ot-order { font-family:'Bebas Neue',sans-serif; font-size:14px; letter-spacing:1px; color:#fff; }
+  .ot-status { font-size:11px; color:rgba(255,255,255,.45); margin-top:1px; }
   .ot-status.done { color:#25D366; }
-  .ot-status.processing { color:var(--red); animation:trackPulse 1.5s infinite; }
-  @keyframes trackPulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-  .ot-close { background:transparent; border:none; color:rgba(255,255,255,.25); font-size:16px; cursor:pointer; padding:4px; flex-shrink:0; }
-  .ot-close:hover { color:#fff; }
+  .ot-status.processing { color:#ff8c00; animation:trackPulse 1.5s infinite; }
+  .ot-del { background:transparent; border:none; color:rgba(255,255,255,.2); font-size:14px; cursor:pointer; padding:2px 4px; flex-shrink:0; }
+  .ot-del:hover { color:rgba(232,25,44,.7); }
+  @keyframes trackPulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
   /* ── FADE UP ── */
   .fade-up { opacity:0; transform:translateY(28px); transition:opacity 0.7s ease,transform 0.7s ease; }
@@ -503,6 +541,10 @@
     .nav-links { display:none; }
     .nav-logo img { height:34px !important; }
     .nav-hamburger { display:flex; }
+    /* Tracker button — compact on mobile */
+    .nav-tracker-btn { padding:6px 9px; font-size:10px; letter-spacing:1px; }
+    #navTrackerLabel { display:none; }
+    #orderTracker { top:58px; right:8px; width:calc(100vw - 16px); }
 
     /* HERO */
     #hero { padding-top:70px; }
@@ -830,14 +872,6 @@
 </div>
 
 <!-- ORDER STATUS TRACKER -->
-<div id="orderTracker">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-    <div class="ot-title">📱 STATUS PESANAN KAMU</div>
-    <button class="ot-close" onclick="document.getElementById('orderTracker').classList.remove('show')">✕</button>
-  </div>
-  <div class="ot-list" id="otList"></div>
-</div>
-
 <!-- FLOATING WA -->
 <a href="https://wa.me/6283177714579" target="_blank" class="float-wa" title="Chat WhatsApp">💬</a>
 
@@ -937,6 +971,11 @@
     <li><a href="#contact">Kontak</a></li>
     <li><a href="https://wa.me/6283177714579" target="_blank" class="nav-wa">💬 WhatsApp</a></li>
   </ul>
+  <!-- Tombol Status Pesanan — selalu tampil di nav -->
+  <button class="nav-tracker-btn" id="navTrackerBtn" onclick="toggleTracker()" title="Lihat status pesanan kamu">
+    📱 <span id="navTrackerLabel">Pesananku</span>
+    <span class="nav-tracker-badge" id="navTrackerBadge"></span>
+  </button>
   <!-- Hamburger for mobile -->
   <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileMenu()">
     <span></span><span></span><span></span>
@@ -1527,9 +1566,12 @@
 
 <!-- ORDER STATUS TRACKER -->
 <div id="orderTracker">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-    <div class="ot-title">📱 STATUS PESANAN KAMU</div>
-    <button class="ot-close" onclick="document.getElementById('orderTracker').classList.remove('show')">✕</button>
+  <div class="ot-header">
+    <div class="ot-title">📱 STATUS PESANANKU</div>
+    <div class="ot-header-btns">
+      <button class="ot-clear-btn" onclick="clearAllTracked()">Hapus Semua</button>
+      <button class="ot-close-btn" onclick="toggleTracker()" title="Tutup">×</button>
+    </div>
   </div>
   <div class="ot-list" id="otList"></div>
 </div>
@@ -1911,47 +1953,105 @@
   document.getElementById('qrisOverlay').addEventListener('click',function(e){if(e.target===this)cancelQris();});
 
   // ── ORDER STATUS TRACKER ──
-  var _trackedOrders = JSON.parse(localStorage.getItem('dipojok_myOrders')||'[]');
+  var _trackedOrders = (function(){
+    try{ return JSON.parse(localStorage.getItem('dipojok_myOrders')||'[]'); }catch(e){ return []; }
+  })();
   var _trackerTimer = null;
 
   function trackOrder(orderId, orderNumber, table){
-    // Simpan ke localStorage agar bisa dipantau
-    _trackedOrders.unshift({id:orderId, orderNumber:orderNumber, table:table, addedAt:Date.now()});
-    // Simpan max 5 order terakhir
+    _trackedOrders.unshift({id:orderId, orderNumber:orderNumber, table:table, addedAt:Date.now(), status:'pending'});
     _trackedOrders = _trackedOrders.slice(0,5);
-    localStorage.setItem('dipojok_myOrders', JSON.stringify(_trackedOrders));
+    try{ localStorage.setItem('dipojok_myOrders', JSON.stringify(_trackedOrders)); }catch(e){}
+    renderTracker();
+    updateTrackerBadge();
+    // Auto-buka dropdown tracker setelah order dikirim
+    setTimeout(function(){
+      document.getElementById('orderTracker').classList.add('show');
+    }, 400);
     startTracking();
+  }
+
+  function clearAllTracked(){
+    _trackedOrders = [];
+    try{ localStorage.removeItem('dipojok_myOrders'); }catch(e){}
+    if(_trackerTimer){ clearInterval(_trackerTimer); _trackerTimer=null; }
+    document.getElementById('orderTracker').classList.remove('show');
+    updateTrackerBadge();
+  }
+
+  function deleteTracked(id){
+    _trackedOrders = _trackedOrders.filter(function(o){ return o.id!==id; });
+    try{ localStorage.setItem('dipojok_myOrders', JSON.stringify(_trackedOrders)); }catch(e){}
+    renderTracker();
+    updateTrackerBadge();
+    if(!_trackedOrders.length){
+      document.getElementById('orderTracker').classList.remove('show');
+    }
+  }
+
+  function toggleTracker(){
+    var el = document.getElementById('orderTracker');
+    var isOpen = el.classList.contains('show');
+    if(isOpen){
+      el.classList.remove('show');
+    } else {
+      if(_trackedOrders.length > 0){
+        renderTracker();
+        el.classList.add('show');
+      } else {
+        showToast('Belum ada pesanan yang dilacak 📭');
+      }
+    }
+  }
+
+  function updateTrackerBadge(){
+    var btn    = document.getElementById('navTrackerBtn');
+    var badge  = document.getElementById('navTrackerBadge');
+    var label  = document.getElementById('navTrackerLabel');
+    var waiting = _trackedOrders.filter(function(o){ return o.status!=='processed'&&o.status!=='rejected'; }).length;
+    var total   = _trackedOrders.length;
+    if(badge){
+      badge.textContent = waiting || total || '';
+      badge.classList.toggle('show', (waiting||total) > 0);
+    }
+    if(btn) btn.classList.toggle('has-orders', total > 0);
+    if(label) label.textContent = total > 0 ? 'Pesananku ('+total+')' : 'Pesananku';
   }
 
   function startTracking(){
     if(!_trackedOrders.length) return;
-    document.getElementById('orderTracker').classList.add('show');
     renderTracker();
+    updateTrackerBadge();
     if(_trackerTimer) clearInterval(_trackerTimer);
-    _trackerTimer = setInterval(function(){
-      pollOrderStatuses();
-    }, 5000);
+    _trackerTimer = setInterval(pollOrderStatuses, 4000);
   }
 
   function pollOrderStatuses(){
     if(!window._firebaseReady || !window._firebaseDb || !_trackedOrders.length) return;
-    var pending = _trackedOrders.filter(function(o){ return o.status !== 'processed' && o.status !== 'rejected'; });
-    if(!pending.length){ clearInterval(_trackerTimer); return; }
+    var needPoll = _trackedOrders.filter(function(o){ return o.status!=='processed'&&o.status!=='rejected'; });
+    if(!needPoll.length){ clearInterval(_trackerTimer); _trackerTimer=null; return; }
 
-    pending.forEach(function(tracked){
+    needPoll.forEach(function(tracked){
       window._firebaseOnValue(
         window._firebaseRef(window._firebaseDb, 'orders/'+tracked.id),
         function(snap){
           var data = snap.val();
-          if(!data) return;
+          if(!data){
+            tracked.status = 'rejected';
+            try{ localStorage.setItem('dipojok_myOrders', JSON.stringify(_trackedOrders)); }catch(e){}
+            renderTracker(); updateTrackerBadge();
+            return;
+          }
           var prev = tracked.status;
-          tracked.status = data.status;
-          // Update localStorage
-          localStorage.setItem('dipojok_myOrders', JSON.stringify(_trackedOrders));
-          if(prev !== data.status){
-            renderTracker();
-            if(data.status === 'processed'){
-              showToast('🍳 Pesanan #'+tracked.orderNumber+' kamu sudah diproses & masuk ke dapur!');
+          if(data.status) tracked.status = data.status;
+          if(data.paymentStatus) tracked.paymentStatus = data.paymentStatus;
+          try{ localStorage.setItem('dipojok_myOrders', JSON.stringify(_trackedOrders)); }catch(e){}
+          if(prev !== tracked.status){
+            renderTracker(); updateTrackerBadge();
+            if(tracked.status==='processed'){
+              showToast('🍳 Pesanan kamu #'+tracked.orderNumber+' sudah dikonfirmasi kasir!');
+            } else if(tracked.status==='rejected'){
+              showToast('❌ Pesanan #'+tracked.orderNumber+' tidak dapat diproses. Hubungi kasir.');
             }
           }
         },
@@ -1962,23 +2062,53 @@
 
   function renderTracker(){
     var el = document.getElementById('otList');
-    if(!_trackedOrders.length){ el.innerHTML=''; return; }
+    if(!_trackedOrders.length){ el.innerHTML='<div style="text-align:center;padding:16px;font-size:11px;color:rgba(255,255,255,.3);letter-spacing:1px;">Belum ada pesanan 📭</div>'; updateTrackerBadge(); return; }
     el.innerHTML = _trackedOrders.map(function(o){
-      var isDone = o.status==='processed';
+      var isDone     = o.status==='processed';
       var isRejected = o.status==='rejected';
-      var cls = isDone?'done':(isRejected?'rejected':'waiting');
+      var cls  = isDone?'done':(isRejected?'rejected':'waiting');
       var icon = isDone?'✅':(isRejected?'❌':'⏳');
-      var statusTxt = isDone?'Sudah diproses! Pesanan masuk ke dapur 🍳'
-        :(isRejected?'Pesanan ditolak kasir'
-        :'Menunggu konfirmasi kasir...');
+      var age  = Math.floor((Date.now()-(o.addedAt||Date.now()))/60000);
+      var statusTxt = isDone
+        ? 'Dikonfirmasi! Pesanan sedang diproses 🍳'
+        : (isRejected
+          ? 'Tidak dapat diproses — hubungi kasir'
+          : (age > 5 ? 'Menunggu... ('+age+' mnt)' : 'Menunggu konfirmasi kasir'));
       var statusCls = isDone?'done':(isRejected?'':'processing');
       return '<div class="ot-item '+cls+'">'
         +'<div class="ot-icon">'+icon+'</div>'
         +'<div class="ot-info">'
         +'<div class="ot-order">Pesanan #'+(o.orderNumber||'—')+' — Meja '+o.table+'</div>'
         +'<div class="ot-status '+statusCls+'">'+statusTxt+'</div>'
-        +'</div></div>';
+        +'</div>'
+        +'<button class="ot-del" data-del-id="'+o.id+'" title="Hapus">×</button>'
+        +'</div>';
     }).join('');
+    el.onclick = function(e){
+      var btn = e.target.closest('[data-del-id]');
+      if(btn) deleteTracked(btn.dataset.delId);
+    };
+    updateTrackerBadge();
+  }
+
+  // Tutup tracker jika klik di luar
+  document.addEventListener('click', function(e){
+    var tracker = document.getElementById('orderTracker');
+    var btn     = document.getElementById('navTrackerBtn');
+    if(tracker && tracker.classList.contains('show')){
+      if(!tracker.contains(e.target) && (!btn || !btn.contains(e.target))){
+        tracker.classList.remove('show');
+      }
+    }
+  });
+
+  // Auto-start tracking jika ada order tersimpan
+  if(_trackedOrders.length > 0){
+    setTimeout(function(){
+      renderTracker();
+      updateTrackerBadge();
+      startTracking();
+    }, 800);
   }
 
   // trackOrder dipanggil langsung di _doActualSend dan _doActualSendWithBukti
