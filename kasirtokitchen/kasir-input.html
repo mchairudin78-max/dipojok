@@ -1360,13 +1360,17 @@ function doReset(){
     setStatus('⏳ Mereset data...','ld');
     fbDelete('/kitchen_orders',function(err){
       if(err){ notif('❌ Gagal reset kitchen_orders: '+err.message,'rd'); return; }
-      // Juga reset customer orders
+      // Reset customer orders
       fbDelete('/orders',function(err2){
         if(err2){ console.warn('Reset orders/ gagal:',err2); }
+        // ✅ Reset orderCounter ke 0 agar nomor mulai dari #1 lagi
+        fbPatch('',{orderCounter:0},function(err3){
+          if(err3){ console.warn('Reset orderCounter gagal:',err3); }
+        });
         localStorage.setItem(LS_CTR,'0');
         knownDone={}; _lastHash=''; processOrders([]);
         _copLastHash=''; _copOrders=[]; renderCustomerOrders([]);
-        notif('🗑️ Data hari ini berhasil direset!','gn');
+        notif('🗑️ Data hari ini berhasil direset! Nomor order kembali ke #1','gn');
         setStatus('✅ Firebase Terhubung','ok');
       });
     });

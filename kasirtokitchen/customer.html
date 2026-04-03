@@ -1777,24 +1777,43 @@
   function cancelQris(){document.getElementById('qrisOverlay').classList.remove('open');document.getElementById('tableModal').classList.add('open');resetBuktiUpload();}
 
   // Wrapper khusus QRIS dengan bukti yang sudah dicapture
+
+  // ── Helper: ambil & increment orderCounter dari Firebase (sequential #1, #2, ...)
+  function getNextOrderNumberFromFirebase(cb) {
+    if(window._firebaseReady && window._firebaseDb) {
+      const counterRef = window._firebaseRef(window._firebaseDb, 'orderCounter');
+      window._firebaseGet(counterRef).then(snap => {
+        const nextNum = (snap.val() || 0) + 1;
+        window._firebaseSet(counterRef, nextNum).catch(()=>{});
+        cb(nextNum);
+      }).catch(()=>{
+        // Fallback jika Firebase error
+        cb(parseInt(Date.now().toString().slice(-4)));
+      });
+    } else {
+      cb(parseInt(Date.now().toString().slice(-4)));
+    }
+  }
+
   function doSendOrderWithBukti(name, table, pay, pStatus, buktiImg) {
     const tp=cart.reduce((s,i)=>s+(i.numPrice*i.qty),0);
     const noted=document.getElementById('notedInput')?document.getElementById('notedInput').value.trim():'';
-
-    // Order number berbasis timestamp (tidak blocking Firebase)
-    const orderNumber = parseInt(Date.now().toString().slice(-4));
-    _doActualSendWithBukti(name, table, pay, pStatus, tp, noted, orderNumber, buktiImg);
+    // Ambil nomor urut sequential dari Firebase
+    getNextOrderNumberFromFirebase(function(orderNumber) {
+      _doActualSendWithBukti(name, table, pay, pStatus, tp, noted, orderNumber, buktiImg);
+    });
   }
 
   function _doActualSendWithBukti(name, table, pay, pStatus, tp, noted, orderNumber, buktiImg) {
     const orderId = 'ORD-' + Date.now();
     const order = {
       id:orderId, orderNumber, customer:name, table, noted,
-      payment:pay, paymentStatus:pStatus, totalPrice:tp,
+      payment:pay, paymentStatus:pStatus, totalPrice:tp, total:tp,
       buktiBayar: buktiImg ? true : false,
       items:cart.map(i=>({...i})),
       time:new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}),
       date:new Date().toLocaleDateString('id-ID'),
+      createdAt:new Date().toISOString(),
       status:'Baru',
       fromCustomer: true,
       timestamp:Date.now()
@@ -1842,12 +1861,10 @@
   function doSendOrder(name,table,pay,pStatus){
     const tp=cart.reduce((s,i)=>s+(i.numPrice*i.qty),0);
     const noted=document.getElementById('notedInput')?document.getElementById('notedInput').value.trim():'';
-
-    // Hitung nomor urut berdasarkan counter di Firebase
-    let orderNumber = 1;
-    // Gunakan timestamp-based number (sederhana, tidak blocking)
-    orderNumber = parseInt(Date.now().toString().slice(-4));
-    _doActualSend(name, table, pay, pStatus, tp, noted, orderNumber);
+    // Ambil nomor urut sequential dari Firebase
+    getNextOrderNumberFromFirebase(function(orderNumber) {
+      _doActualSend(name, table, pay, pStatus, tp, noted, orderNumber);
+    });
   }
 
   function _doActualSend(name, table, pay, pStatus, tp, noted, orderNumber) {
@@ -1861,10 +1878,12 @@
       payment:pay,
       paymentStatus:pStatus,
       totalPrice:tp,
+      total:tp,
       buktiBayar:buktiBayarBase64,
       items:cart.map(i=>({...i})),
       time:new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}),
       date:new Date().toLocaleDateString('id-ID'),
+      createdAt:new Date().toISOString(),
       status:'Baru',
       fromCustomer: true,
       timestamp: Date.now()
