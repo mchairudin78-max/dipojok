@@ -163,10 +163,10 @@
     display:block; transition:transform 0.4s ease;
   }
   .menu-card:hover .card-img { transform:scale(1.06); }
-  /* Placeholder saat belum ada foto */
+  /* Placeholder saat belum ada foto — hidden by default, muncul jika foto gagal load */
   .card-img-placeholder {
     position:absolute; inset:0;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    display:none; flex-direction:column; align-items:center; justify-content:center;
     gap:8px; background:#1a1a1a;
     border:2px dashed rgba(232,25,44,0.25);
   }
@@ -206,7 +206,7 @@
   /* Gallery image */
   .gallery-img { width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.4s ease; position:absolute; inset:0; }
   .gallery-item:hover .gallery-img { transform:scale(1.06); }
-  .gallery-placeholder { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; background:#111; border:2px dashed rgba(232,25,44,0.2); }
+  .gallery-placeholder { position:absolute; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; gap:8px; background:#111; border:2px dashed rgba(232,25,44,0.2); }
   .gallery-placeholder span { font-size:40px; opacity:0.4; }
   .gallery-placeholder p { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.2); }
 
@@ -1387,7 +1387,7 @@
   </div>
   <div class="exp-right">
     <div class="exp-feature fade-up"><div class="exp-icon">🕐</div><div class="exp-text"><h4>Jam Buka</h4><p>Senin – Minggu<br>08:00 – 23:00 WITA</p></div></div>
-    <div class="exp-feature fade-up stagger-1"><div class="exp-icon">🪑</div><div class="exp-text"><h4>4 Zona Duduk</h4><p>Indoor AC, semi-outdoor, rooftop, dan pojok study. Cocok untuk santai hingga rapat kerja.</p></div></div>
+    <div class="exp-feature fade-up stagger-1"><div class="exp-icon">🪑</div><div class="exp-text"><h4>4 Zona Duduk</h4><p>Indoor AC, semi-outdoor, dan meeting room. Cocok untuk santai hingga rapat kerja.</p></div></div>
     <div class="exp-feature fade-up stagger-2"><div class="exp-icon">📱</div><div class="exp-text"><h4>Order Langsung di Meja</h4><p>Pesan melalui website ini, pesanan langsung masuk ke kasir tanpa harus antri.</p></div></div>
     <div class="exp-feature fade-up stagger-3"><div class="exp-icon">💬</div><div class="exp-text"><h4>Customer Service via WA</h4><p>Ada pertanyaan? Hubungi kami langsung via WhatsApp 0831-7771-4579.</p></div></div>
   </div>
@@ -1401,7 +1401,7 @@
   <div class="gallery-grid">
     <div class="gallery-item fade-up"><img class="gallery-img" src="fotosuasana/suasana-1.jpg" alt="Kopi Kami" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="gallery-placeholder"><span>☕</span><p>Tambah Foto</p></div><div class="gallery-overlay">KOPI KAMI</div></div>
     <div class="gallery-item fade-up stagger-1"><img class="gallery-img" src="fotosuasana/suasana-2.jpg" alt="Indoor" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="gallery-placeholder"><span>🪴</span><p>Tambah Foto</p></div><div class="gallery-overlay">INDOOR</div></div>
-    <div class="gallery-item fade-up stagger-2"><img class="gallery-img" src="fotosuasana/suasana-3.jpg" alt="Rooftop" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="gallery-placeholder"><span>🌙</span><p>Tambah Foto</p></div><div class="gallery-overlay">ROOFTOP</div></div>
+    <div class="gallery-item fade-up stagger-2"><img class="gallery-img" src="fotosuasana/suasana-3.jpg" alt="meeting" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="gallery-placeholder"><span>🌙</span><p>Tambah Foto</p></div><div class="gallery-overlay">meeting room</div></div>
     <div class="gallery-item fade-up stagger-1"><img class="gallery-img" src="fotosuasana/suasana-4.jpg" alt="Hidangan" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="gallery-placeholder"><span>🍽️</span><p>Tambah Foto</p></div><div class="gallery-overlay">HIDANGAN</div></div>
     <div class="gallery-item fade-up stagger-2"><img class="gallery-img" src="fotosuasana/suasana-5.jpg" alt="Study Corner" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="gallery-placeholder"><span>📚</span><p>Tambah Foto</p></div><div class="gallery-overlay">STUDY CORNER</div></div>
   </div>
