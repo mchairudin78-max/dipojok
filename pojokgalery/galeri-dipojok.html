@@ -1003,30 +1003,61 @@ function renderTabs(currentDayNum) {
   const tabsEl = document.getElementById('dayTabs');
   const tabsWrap = document.getElementById('tabsWrap');
   const days = [];
+
+  // cek hari yang ada fotonya
   for (let d = 1; d <= 7; d++) {
     if (allPhotos[`day${d}`] && allPhotos[`day${d}`].length > 0) {
       days.push(d);
     }
   }
+
   if (days.length === 0) {
     tabsWrap.style.display = 'none';
     return;
   }
+
   tabsWrap.style.display = 'block';
-  if (!activeDay || !days.includes(activeDay)) activeDay = days[0];
+
+  if (!activeDay || !days.includes(activeDay)) {
+    activeDay = days[0];
+  }
+
   const weekStart = weekConfig ? weekConfig.weekStart : Date.now();
+
   tabsEl.innerHTML = days.map(d => {
-const namaHari = dateObj.toLocaleDateString('id-ID', {
-  weekday: 'long'
-});
-    const dateStr = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+
+    // HITUNG tanggal berdasarkan minggu
+    const dateObj = new Date(weekStart + (d - 1) * 86400000);
+
+    // ambil nama hari (Senin, Selasa, dll)
+    let namaHari = dateObj.toLocaleDateString('id-ID', {
+      weekday: 'long'
+    });
+
+    // bikin huruf depan besar (opsional biar rapi)
+    namaHari =
+      namaHari.charAt(0).toUpperCase() +
+      namaHari.slice(1);
+
+    // tanggal
+    const dateStr = dateObj.toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'short'
+    });
+
     const yearStr = dateObj.getFullYear();
+
     const active = d === activeDay ? 'active' : '';
-    const count = allPhotos[`day${d}`] ? allPhotos[`day${d}`].length : 0;
+
+    const count = allPhotos[`day${d}`]
+      ? allPhotos[`day${d}`].length
+      : 0;
+
     return `<button class="day-tab ${active}" onclick="switchTab(${d})">
       <span class="tab-day">${namaHari}</span>
       <span class="tab-date">${dateStr} ${yearStr} • ${count} foto</span>
     </button>`;
+
   }).join('');
 }
 
@@ -1035,7 +1066,10 @@ function switchTab(day) {
   document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
   event.currentTarget.classList.add('active');
   renderGallery(day);
-  document.getElementById('gallery').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById('gallery').scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+  });
 }
 
 // ─── GALLERY RENDER ───────────────────────────────────
