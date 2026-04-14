@@ -720,7 +720,7 @@ const ADMIN_USER = 'dipojokid';
 const ADMIN_PASS = 'dipojokid154154';
 
 // ─── STATE ────────────────────────────────────────────
-let GH = { owner: '', repo: '', branch: 'main', token: '' };
+let GH = { owner: 'Chaii154', repo: 'dipojok', branch: 'main', token: '' };
 let weekConfig = null;
 let allPhotos = {};     // { day1: [{name,url,sha,path}], ... }
 let activeDay = 1;
@@ -751,13 +751,14 @@ function loadGHConfig() {
     const saved = localStorage.getItem('dpgallery_config');
     if (saved) {
       const c = JSON.parse(saved);
-      GH.owner = c.owner || '';
-      GH.repo  = c.repo  || '';
-      GH.branch = c.branch || 'main';
-      if (c.owner) document.getElementById('cfgOwner').value = c.owner;
-      if (c.repo)  document.getElementById('cfgRepo').value  = c.repo;
-      if (c.branch) document.getElementById('cfgBranch').value = c.branch;
+      GH.owner = c.owner || GH.owner;
+      GH.repo  = c.repo  || GH.repo;
+      GH.branch = c.branch || GH.branch;
     }
+    // Pre-fill form fields with current GH values (including hardcoded defaults)
+    document.getElementById('cfgOwner').value = GH.owner;
+    document.getElementById('cfgRepo').value  = GH.repo;
+    document.getElementById('cfgBranch').value = GH.branch;
     // Token stored in sessionStorage only
     const tok = sessionStorage.getItem('dpgallery_token');
     if (tok) { GH.token = tok; document.getElementById('cfgToken').value = tok; }
@@ -897,8 +898,23 @@ async function initGallery() {
   // Get week config
   weekConfig = await ghGetConfig();
   if (!weekConfig) {
-    // No config yet — show prompt for admin to init
-    showNoConfigState();
+    // No config yet — still try to show any photos that exist
+    allPhotos = {};
+    totalPhotoCount = 0;
+    for (let d = 1; d <= 7; d++) {
+      allPhotos[`day${d}`] = await ghListDay(d);
+      totalPhotoCount += allPhotos[`day${d}`].length;
+    }
+    if (totalPhotoCount > 0) {
+      // Photos exist but no config — show them anyway
+      document.getElementById('weekBadge').textContent = 'GALERI';
+      document.getElementById('weekText').textContent = 'Foto tersedia — Admin belum set periode minggu';
+      document.getElementById('weekCountdown').textContent = '';
+      renderTabs(1);
+      renderGallery(activeDay);
+    } else {
+      showNoConfigState();
+    }
     return;
   }
 
