@@ -802,7 +802,14 @@ function ghHeaders(write) {
 async function testConnection() {
   try {
     const res = await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}`, { headers: ghHeaders() });
-    return res.ok;
+    if (!res.ok) return false;
+    const data = await res.json();
+    // Cek apakah token punya push access (write permission)
+    if (GH.token && !data.permissions?.push) {
+      showToast('⚠️ Token tidak punya izin write ke repo ini!', 'error');
+      return false;
+    }
+    return true;
   } catch { return false; }
 }
 
@@ -862,9 +869,14 @@ async function ghUpload(dayNum, file) {
           body: JSON.stringify({ message: `Upload day${dayNum} - ${filename}`, content: base64 })
         });
         if (res.ok) resolve({ filename, path });
-        else { const err = await res.json(); reject(err.message || 'Upload failed'); }
-      } catch(err) { reject(err.message); }
+        else {
+          const err = await res.json();
+          const msg = `${res.status} - ${err.message || 'Upload failed'}`;
+          reject(msg);
+        }
+      } catch(err) { reject(err.message || 'Network error'); }
     };
+    reader.onerror = () => reject('Gagal membaca file');
     reader.readAsDataURL(file);
   });
 }
@@ -1167,6 +1179,7 @@ async function doUpload() {
   const status = document.getElementById('uploadStatus');
   btn.disabled = true;
   let success = 0, fail = 0;
+  let lastError = '';
   for (let i = 0; i < uploadFiles.length; i++) {
     const f = uploadFiles[i];
     status.textContent = `⬆ Uploading ${i+1}/${uploadFiles.length}: ${f.name}...`;
@@ -1176,6 +1189,7 @@ async function doUpload() {
       success++;
     } catch(e) {
       console.error('Upload failed:', e);
+      lastError = typeof e === 'string' ? e : (e.message || 'Upload gagal');
       fail++;
     }
   }
@@ -1191,7 +1205,17 @@ async function doUpload() {
     await initGallery();
   }
   if (fail > 0) {
-    showToast(`${fail} foto gagal diupload`, 'error');
+    const errMsg = lastError ? `: ${lastError}` : '';
+    status.textContent = `❌ ${fail} foto gagal${errMsg}`;
+    status.style.color = 'var(--red)';
+    showToast(`❌ ${fail} foto gagal diupload${errMsg}`, 'error');
+    // Hint penyebab umum
+    if (lastError.includes('403') || lastError.toLowerCase().includes('forbidden') || lastError.toLowerCase().includes('resource not accessible')) {
+      setTimeout(() => showToast('💡 Pastikan token punya scope "repo" atau "public_repo"', 'error'), 500);
+    }
+    if (lastError.includes('401') || lastError.toLowerCase().includes('bad credential')) {
+      setTimeout(() => showToast('💡 Token tidak valid atau sudah expired', 'error'), 500);
+    }
   }
 }
 
