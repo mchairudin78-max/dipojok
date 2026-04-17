@@ -957,6 +957,7 @@ async function initGallery() {
   updateWeekStats(dayNum);
   // Auto-expire jika foto sudah >7 hari dan admin login
   if (isAdmin) checkAndAutoExpire();
+}
 
 function showLoadingState() {
   const gw = document.getElementById('galleryWrap');
