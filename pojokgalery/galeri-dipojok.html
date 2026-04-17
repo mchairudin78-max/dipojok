@@ -1505,26 +1505,34 @@ async function deleteAllWeek() {
   showDeleteSection();
 }
 
-// ─── AUTO EXPIRE (hapus foto per-foto berdasarkan tanggal upload) ────
-// Setiap foto expire 7 hari sejak tanggal upload-nya masing-masing.
+// ─── AUTO EXPIRE (hapus per tab/hari jika sudah >7 hari sejak upload) ────
+// Jika foto di sebuah tab diupload >7 hari lalu, seluruh tab itu dihapus sekaligus.
 async function checkAndAutoExpire() {
   if (!GH.token) return;
   const now = Date.now();
   const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
-  let deleted = 0;
+  let deletedTabs = 0;
+  let deletedPhotos = 0;
   for (let d = 1; d <= 7; d++) {
     const photos = (allPhotos['day' + d] || []).slice();
-    for (const photo of photos) {
-      const ts = parseInt(photo.name.split('_')[0]);
-      if (!isNaN(ts) && (now - ts) > SEVEN_DAYS) {
-        console.log('[AutoExpire] Hapus ' + photo.name + ', umur ' + Math.floor((now-ts)/86400000) + ' hari');
+    if (photos.length === 0) continue;
+    // Ambil timestamp dari nama file foto pertama di tab ini
+    const ts = parseInt(photos[0].name.split('_')[0]);
+    if (isNaN(ts)) continue;
+    const ageMs = now - ts;
+    if (ageMs > SEVEN_DAYS) {
+      const uploadDate = new Date(ts).toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
+      console.log('[AutoExpire] Tab Hari ' + d + ' (upload: ' + uploadDate + ') sudah ' + Math.floor(ageMs/86400000) + ' hari, dihapus semua...');
+      // Hapus semua foto di tab ini
+      for (const photo of photos) {
         const ok = await ghDelete(photo.path, photo.sha);
-        if (ok) deleted++;
+        if (ok) deletedPhotos++;
       }
+      deletedTabs++;
     }
   }
-  if (deleted > 0) {
-    showToast(deleted + ' foto lama (>7 hari dari upload) otomatis dihapus!');
+  if (deletedPhotos > 0) {
+    showToast(deletedPhotos + ' foto dari ' + deletedTabs + ' hari otomatis dihapus (sudah >7 hari)!');
     await initGallery();
   }
 }
